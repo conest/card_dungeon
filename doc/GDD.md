@@ -16,7 +16,7 @@ Name: Card Dungeon (Tentative)
 ### Narrative
 
 1. Story about this game
-2. Performance: Dialog; How is the plot performed? 
+2. Performance: Dialog; How does the plot performed? 
 3. Opening; Ending
 
 ### Program
@@ -31,7 +31,7 @@ Name: Card Dungeon (Tentative)
 
 ### Art
 
-1. Map: 16*16 tile-sets; elements like treasure chest; decoration
+1. Map: 16*16 tile-sets; elements like a treasure chest; decoration
 2. Player: 4 direction movement; Animation(4 Frames?); Different animation when using a card(casting spells or skills)
 3. Enemy or Monsters art; animation? (if enough time)
 4. Cards: icon
