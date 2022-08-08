@@ -8,7 +8,7 @@
 
 游戏会采用传统的2D附视角，玩家在地牢中可4方向移动（可否8方向斜向移动？）地牢为随机生成。一层有固定大小，找到楼梯前往下一层（也可以是平面四方向移动？类似于以撒的结合的地图机制）
 
-![example_dungeon](img/example_dungeon.png)
+![example_dungeon](../img/example_dungeon.png)
 
 ## 卡牌
 

@@ -4,6 +4,8 @@
 
 Name: Card Dungeon (Tentative)
 
+Genre: Dungeon crawler; Turn based; Rouge Like; Pixel Art
+
 ## Development Content
 
 ### Mechanism Design
