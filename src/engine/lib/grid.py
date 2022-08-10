@@ -8,8 +8,8 @@ class GridInt:
     arr: array
     _size: Vec2i
 
-    def __init__(self, size: Vec2i) -> None:
-        self._size = size
+    def __init__(self, x: int, y: int) -> None:
+        self._size = Vec2i(x, y)
         self.arr = array('i')
         for _ in range(self.length()):
             self.arr.append(0)

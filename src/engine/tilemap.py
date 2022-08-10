@@ -22,10 +22,11 @@ class TileMap(SurfaceItem):
 
     def __init__(self, x: int, y: int, tileSize: int = 16):
         super().__init__()
+        self.name = "TileMap"
         self.tileSize = tileSize
-        self.grid = GridInt(Vec2i(x, y))
+        self.grid = GridInt(x, y)
         self.grid.reset(-1)
-        self.dirty_grid = GridInt(Vec2i(x, y))
+        self.dirty_grid = GridInt(x, y)
         self.grid.reset(0)
         self.new(x * tileSize, y * tileSize)
 
@@ -45,6 +46,10 @@ class TileMap(SurfaceItem):
     def set_map(self, x: int, y: int, v: int):
         self.grid.set_grid(x, y, v)
         self.dirty_grid.set_grid(x, y, 1)
+
+    def set_map_direct(self, i: int, v: int):
+        self.grid.arr[i] = v
+        self.dirty_grid.arr[i] = 1
 
     def set_map_by_sheet_xy(self, x: int, y: int, vec: Vec2i):
         v = vec.x + vec.y * self._Hframes
