@@ -37,7 +37,7 @@ class TilePos(Vec2i):
 
     def direct(self, d: Direction) -> TilePos:
         loc = DIR_LOC[d]
-        return TilePos(self.x, self.y) + TilePos(loc[0], loc[1])
+        return TilePos(self.x + loc[0], self.y + loc[1])
 
     def direction_from(self, toTile: TilePos) -> Direction:
         x = toTile.x - self.x
@@ -45,3 +45,10 @@ class TilePos(Vec2i):
         if (x, y) in LOC_DIR:
             return LOC_DIR[(x, y)]
         return None
+
+    def toVect(self) -> Vec2i:
+        return Vec2i(self.x, self.y)
+
+    def fromVect(self, v: Vec2i):
+        self.x = v.x
+        self.y = v.y

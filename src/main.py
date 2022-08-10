@@ -5,9 +5,9 @@ from scene.scene_main import gameScene
 
 
 def main():
-    WINDOW_SIZE = (800, 450)
-    WINDOW_FLAG = pygame.RESIZABLE
-    # WINDOW_FLAG = pygame.RESIZABLE | pygame.SCALED
+    WINDOW_SIZE = (800, 800)
+    # WINDOW_FLAG = pygame.RESIZABLE
+    WINDOW_FLAG = pygame.RESIZABLE | pygame.SCALED
     WINDOW_CAPTION = "Card Dungeon"
     engine.main.init(WINDOW_SIZE, WINDOW_FLAG, WINDOW_CAPTION)
 

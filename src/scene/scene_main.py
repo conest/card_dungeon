@@ -1,8 +1,8 @@
 import functools
 from engine.scene import Scene
 from engine.resource import resource
-from engine.tilemap import TileMap
-from engine.lib.vect import Vec2i
+# from engine.tilemap import TileMap
+# from engine.lib.vect import Vec2i
 from module.map import Map
 
 
@@ -15,6 +15,7 @@ def init(self):
     map.draw_map()
 
     self.add_surface(map.tilemap)
+    self.add_surface(map.debug_surface)
 
 
 gameScene = Scene()
