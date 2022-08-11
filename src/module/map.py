@@ -8,10 +8,6 @@ from engine.sufaceItem import SurfaceItem
 from module import map_generator as mg
 
 
-class Terrain(IntEnum):
-    WALL = 1
-
-
 class Sheet(IntEnum):
     WALL = 241
 
@@ -43,7 +39,7 @@ class Map:
 
     def sync_map(self):
         for i, t in enumerate(self.terrain.arr):
-            if t == Terrain.WALL:
+            if t == mg.Terrain.WALL:
                 self.tilemap.set_map_direct(i, Sheet.WALL)
 
     def draw_map(self):
