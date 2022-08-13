@@ -128,7 +128,7 @@ class AnimatedSprite(Sprite):
             self.animation.animations[name].add_frame(frame)
 
     def update(self, delta: int):
-        '''(@AnimatedSprite) Overload SurfaceItem's update method for updating animation'''
+        '''(@AnimatedSprite) Overload Object's update method for updating animation'''
         self.animation.update(delta)
 
     def draw(self, surface: pygame.Surface):

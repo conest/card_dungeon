@@ -21,6 +21,7 @@ class Map:
     size: Vec2i
     tilemap: TileMap
     terrain: GridInt
+    rooms: list[pygame.Rect]
 
     debug_surface: SurfaceItem
 
@@ -32,6 +33,9 @@ class Map:
 
         self.debug_surface = SurfaceItem()
         self.debug_surface.new(MAP_SIZE_X * TILE_PIXEL, MAP_SIZE_Y * TILE_PIXEL)
+
+    def surface(self) -> pygame.Surface:
+        return self.tilemap.surface
 
     def tilemap_load_resource(self, s: pygame.Surface, h: int, v: int):
         self.tilemap.load_sheet(s)
@@ -47,4 +51,4 @@ class Map:
         self.tilemap.update_surface()
 
     def map_generate(self):
-        self.terrain = mg.generator(self.debug_surface.surface)
+        (self.terrain, self.rooms) = mg.generator(self.debug_surface.surface)

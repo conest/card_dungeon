@@ -1,5 +1,5 @@
 import pygame
-from .object import Object
+from .object import Object, ObjectList
 from .lib.vect import Vec2f
 
 
@@ -24,7 +24,7 @@ class SurfaceItem(Object):
         self.size = pygame.Rect(0, 0, x, y)
 
     def rect(self) -> pygame.Rect:
-        return pygame.Rect(self.position.x, self.position.y, self.size.w, self.size.h)
+        return pygame.Rect(self.position.to_tuple_int(), self.size.size)
 
     def set_position(self, x: float, y: float):
         self.position.set(x, y)
@@ -35,3 +35,23 @@ class SurfaceItem(Object):
     def draw(self, surface: pygame.Surface):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int())
+
+
+class SurfaceList(ObjectList):
+
+    def __init__(self, groupName: str = "SurfaceGroup"):
+        super().__init__(groupName)
+
+    def update(self, delta: int):
+        '''Update surface graphic'''
+        for s in self.objects:
+            s.update(delta)
+
+    def draw(self, screen: pygame.Surface):
+        '''Draw surface graph on the screen'''
+        for s in self.objects:
+            s.draw(screen)
+
+    def sort(self):
+        '''Sort surfaces by zIndex'''
+        self.objects.sort(key=lambda s: s.zIndex)

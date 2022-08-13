@@ -21,27 +21,6 @@ class Signal:
         self.active = False
 
 
-class Link:
-    signal: Signal
-    target = None
-    targetFunc: Callable
-
-    def __init__(self, source: Signal, target, targetFunc: Callable):
-        self.signal = source
-        self.target = target
-        self.targetFunc = targetFunc
-
-    def __str__(self) -> str:
-        return f'[Link] signal: {self.signal} target: {self.target}'
-
-    def signal_active(self) -> bool:
-        return self.signal.active
-
-    def call_target(self):
-        self.signal.inactive()
-        self.targetFunc(self.target, self.signal.data)
-
-
 class SignalGroup:
     signals: dict = {}
 
@@ -75,3 +54,26 @@ class SignalGroup:
         if name in self.signals:
             return self.signals[name]
         return None
+
+
+class Link:
+    signal: Signal
+    target = None
+    targetFunc: Callable
+
+    def __init__(self, source: Signal, target, targetFunc: Callable):
+        self.signal = source
+        self.target = target
+        self.targetFunc = targetFunc
+
+    def __str__(self) -> str:
+        return f'[Link] signal: {self.signal} target: {self.target}'
+
+    def signal_active(self) -> bool:
+        return self.signal.active
+
+    def call_target(self):
+        self.signal.inactive()
+        self.targetFunc(self.target, self.signal.data)
+
+# TODO: a link list to manage links include delete

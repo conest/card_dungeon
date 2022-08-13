@@ -1,14 +1,25 @@
 from __future__ import annotations
 
-from enum import Enum, auto
+from enum import IntEnum
 from .vect import Vec2i
 
 
-class Direction(Enum):
-    UP = auto()
-    RIGHT = auto()
-    DOWN = auto()
-    LEFT = auto()
+class Direction(IntEnum):
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
+    LEFT = 4
+
+
+class Direction8(IntEnum):
+    UP = 1
+    RIGHT = 2
+    DOWN = 3
+    LEFT = 4
+    UP_RIGHT = 5
+    DOWN_RIGHT = 6
+    UP_LEFT = 7
+    DOWN_LEFT = 8
 
 
 DIR_LOC = {
@@ -25,6 +36,18 @@ LOC_DIR = {
     (-1, 0): Direction.LEFT,
     (1, 0): Direction.RIGHT,
 }
+
+
+def opposite_direction(d: Direction) -> Direction:
+    match d:
+        case Direction.UP:
+            return Direction.DOWN
+        case Direction.DOWN:
+            return Direction.UP
+        case Direction.LEFT:
+            return Direction.RIGHT
+        case Direction.RIGHT:
+            return Direction.LEFT
 
 
 class TilePos(Vec2i):
@@ -52,3 +75,6 @@ class TilePos(Vec2i):
     def fromVect(self, v: Vec2i):
         self.x = v.x
         self.y = v.y
+
+    def duplicate(self) -> TilePos:
+        return TilePos(self.x, self.y)

@@ -13,14 +13,16 @@ TILE_PIXEL = 16
 
 
 class Terrain(IntEnum):
-    WALL = 11
     PATH = 1
     ROOM = 2
     DOOR = 3
     FOYER = 4
 
+    WALL = 11
+    BORDER = 99
 
-def generator(debug_surface: pygame.Surface) -> GridInt:
+
+def generator(debug_surface: pygame.Surface) -> tuple[GridInt, list]:
 
     terrain = GridInt(MAP_SIZE_X, MAP_SIZE_Y)
     markMap = GridInt(MAP_SIZE_X, MAP_SIZE_Y)
@@ -34,7 +36,7 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
         ROOM_SIZE_MIN_Y = 4
 
         terrain.reset(Terrain.WALL)
-        # Gen rooms
+        # gen rooms
         for _ in range(ROOM_TRYING_NUM):
             sx = random.randint(ROOM_SIZE_MIN_X, ROOM_SIZE_MAX_X + 1)
             sy = random.randint(ROOM_SIZE_MIN_Y, ROOM_SIZE_MAX_Y + 1)
@@ -49,11 +51,18 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
             if not overlap:
                 rooms.append(newRoom)
 
-        # Write rooms
+        # make rooms
         for r in rooms:
             for y in range(1, r.h):
                 for x in range(1, r.w):
                     terrain.set_grid(x + r.x, y + r.y, Terrain.ROOM)
+
+        # shrink rooms
+        for r in rooms:
+            r.x += 1
+            r.y += 1
+            r.w -= 1
+            r.h -= 1
 
     def _check_8tiles(loc: Vec2i) -> bool:
         '''Check 8 direction of a location is all blocked'''
@@ -153,35 +162,48 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
                     break
                 start = nodeList[-1]
 
+    def check_right_door(door: Vec2i, fd: Vec2i, rd: Vec2i, aDoors: list):
+        if terrain.get(door.x, door.y) == Terrain.WALL and terrain.get(fd.x, fd.y) != Terrain.WALL:
+            markMap.set_grid(door.x, door.y, 1)
+            aDoors.append((door, rd))
+
     def make_room_doors(room: Rect) -> list[tuple]:
         '''Return tuple: (Door location, in room side / foyer)'''
         aDoors = []
+        downWall = room.y + room.h
+        rightWall = room.x + room.w
+
+        # UP side
         if room.y > 1:
-            for x in range(room.x + 1, room.x + room.w):
-                if terrain.get(x, room.y) == Terrain.WALL and terrain.get(x, room.y - 1) != Terrain.WALL:
-                    markMap.set_grid(x, room.y, 1)
-                    tup = (Vec2i(x, room.y), Vec2i(x, room.y + 1))
-                    aDoors.append(tup)
-        y = room.y + room.h
-        if y < MAP_SIZE_Y - 1:
-            for x in range(room.x + 1, room.x + room.w):
-                if terrain.get(x, y) == Terrain.WALL and terrain.get(x, y + 1) != Terrain.WALL:
-                    markMap.set_grid(x, y, 1)
-                    tup = (Vec2i(x, y), Vec2i(x, y - 1))
-                    aDoors.append(tup)
+            for x in range(room.x, rightWall):
+                door = Vec2i(x, room.y - 1)
+                fd = Vec2i(x, room.y - 2)
+                rd = Vec2i(x, room.y)
+                check_right_door(door, fd, rd, aDoors)
+
+        # DOWN side
+        if downWall < MAP_SIZE_Y - 1:
+            for x in range(room.x, rightWall):
+                door = Vec2i(x, downWall)
+                fd = Vec2i(x, downWall + 1)
+                rd = Vec2i(x, downWall - 1)
+                check_right_door(door, fd, rd, aDoors)
+
+        # LEFT side
         if room.x > 1:
-            for y in range(room.y + 1, room.y + room.h):
-                if terrain.get(room.x, y) == Terrain.WALL and terrain.get(room.x - 1, y) != Terrain.WALL:
-                    markMap.set_grid(room.x, y, 1)
-                    tup = (Vec2i(room.x, y), Vec2i(room.x + 1, y))
-                    aDoors.append(tup)
-        x = room.x + room.w
-        if x < MAP_SIZE_X - 1:
-            for y in range(room.y + 1, room.y + room.h):
-                if terrain.get(x, y) == Terrain.WALL and terrain.get(x + 1, y) != Terrain.WALL:
-                    markMap.set_grid(x, y, 1)
-                    tup = (Vec2i(x, y), Vec2i(x - 1, y))
-                    aDoors.append(tup)
+            for y in range(room.y, downWall):
+                door = Vec2i(room.x - 1, y)
+                fd = Vec2i(room.x - 2, y)
+                rd = Vec2i(room.x, y)
+                check_right_door(door, fd, rd, aDoors)
+
+        # RIGHT side
+        if rightWall < MAP_SIZE_X - 1:
+            for y in range(room.y, downWall):
+                door = Vec2i(rightWall, y)
+                fd = Vec2i(rightWall + 1, y)
+                rd = Vec2i(rightWall - 1, y)
+                check_right_door(door, fd, rd, aDoors)
 
         return aDoors
 
@@ -225,7 +247,6 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
 
     def simplify_path():
         SIMPLIFY_NUM = 160
-
         count = SIMPLIFY_NUM
         deadends = find_deadend()
         if len(deadends) == 0:
@@ -237,7 +258,6 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
             if len(deadends) == 0:
                 deadends = find_deadend()
                 if len(deadends) == 0:
-                    print("All clear")
                     return
 
     def _debug_check_markMap():
@@ -267,7 +287,8 @@ def generator(debug_surface: pygame.Surface) -> GridInt:
     gen_rooms()
     gen_connection()
     gen_doors()
+    # _debug_check_markMap()
     # _debug_draw_terrain_mark()
     simplify_path()
 
-    return terrain
+    return (terrain, rooms)
