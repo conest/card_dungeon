@@ -17,7 +17,6 @@ class Scene:
     objects: dict = {}
     '''Commen objects dic'''
     surfaceList: SurfaceList
-    '''SurfaceItem List'''
     links: list = []
     '''Signal links'''
 

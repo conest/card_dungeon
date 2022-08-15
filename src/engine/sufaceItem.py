@@ -36,21 +36,32 @@ class SurfaceItem(Object):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int())
 
+    def draw_with_area(self, surface: pygame.Surface, area: pygame.Rect):
+        if self.visible:
+            surface.blit(self.surface, self.position.to_tuple_int(), area)
+
 
 class SurfaceList(ObjectList):
 
     def __init__(self, groupName: str = "SurfaceGroup"):
         super().__init__(groupName)
 
-    def update(self, delta: int):
-        '''Update surface graphic'''
+    def update(self, delta: int) -> bool:
+        '''Update surface graphic, return true if some surface changed'''
+        changed = False
         for s in self.objects:
-            s.update(delta)
+            if s.update(delta) is True:
+                changed = True
+        return changed
 
     def draw(self, screen: pygame.Surface):
         '''Draw surface graph on the screen'''
         for s in self.objects:
             s.draw(screen)
+
+    def draw_with_area(self, screen: pygame.Surface, area: pygame.Rect):
+        for s in self.objects:
+            s.draw_with_area(screen, area)
 
     def sort(self):
         '''Sort surfaces by zIndex'''

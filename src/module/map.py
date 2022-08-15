@@ -1,6 +1,7 @@
 from enum import IntEnum
 
 import pygame
+import setting
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 from engine.tilemap import TileMap
@@ -12,12 +13,13 @@ class Sheet(IntEnum):
     WALL = 241
 
 
-MAP_SIZE_X = mg.MAP_SIZE_X
-MAP_SIZE_Y = mg.MAP_SIZE_Y
-TILE_PIXEL = mg.TILE_PIXEL
+MAP_SIZE_X = setting.MAP_SIZE_X
+MAP_SIZE_Y = setting.MAP_SIZE_Y
+TILE_PIXEL = setting.TILE_PIXEL
 
 
 class Map:
+    NAME = "map"
     size: Vec2i
     tilemap: TileMap
     terrain: GridInt
@@ -34,8 +36,8 @@ class Map:
         self.debug_surface = SurfaceItem()
         self.debug_surface.new(MAP_SIZE_X * TILE_PIXEL, MAP_SIZE_Y * TILE_PIXEL)
 
-    def surface(self) -> pygame.Surface:
-        return self.tilemap.surface
+    def si(self) -> SurfaceItem:
+        return self.tilemap
 
     def tilemap_load_resource(self, s: pygame.Surface, h: int, v: int):
         self.tilemap.load_sheet(s)

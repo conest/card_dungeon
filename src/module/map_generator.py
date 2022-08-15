@@ -2,14 +2,16 @@ import random
 from enum import IntEnum
 
 import pygame
+import setting
+
 from pygame import Rect
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 from engine.lib.tilePos import Direction, TilePos
 
-MAP_SIZE_X = 50
-MAP_SIZE_Y = 50
-TILE_PIXEL = 16
+MAP_SIZE_X = setting.MAP_SIZE_X
+MAP_SIZE_Y = setting.MAP_SIZE_Y
+TILE_PIXEL = setting.TILE_PIXEL
 
 
 class Terrain(IntEnum):

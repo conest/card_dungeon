@@ -1,15 +1,11 @@
 #! /usr/bin/env python3
-import pygame
 import engine
 from scene.scene_main import gameScene
+import setting
 
 
 def main():
-    WINDOW_SIZE = (800, 800)
-    WINDOW_FLAG = pygame.RESIZABLE
-    # WINDOW_FLAG = pygame.RESIZABLE | pygame.SCALED
-    WINDOW_CAPTION = "Card Dungeon"
-    engine.main.init(WINDOW_SIZE, WINDOW_FLAG, WINDOW_CAPTION)
+    engine.main.init(setting.WINDOW_SIZE, setting.WINDOW_FLAG, setting.WINDOW_CAPTION)
 
     gameScene.init()
 

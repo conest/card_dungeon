@@ -42,6 +42,9 @@ class Vec2i:
     def to_tuple(self) -> tuple:
         return (self.x, self.y)
 
+    def to_Vec2f(self) -> Vec2f:
+        return Vec2f(float(self.x), float(self.y))
+
     def distence(self, to: Vec2i) -> int:
         return abs(to.x - self.x) + abs(to.y - self.y)
 

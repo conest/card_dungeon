@@ -1,7 +1,7 @@
 from __future__ import annotations
 import pygame
 from .sufaceItem import SurfaceItem
-from .animation import Frame, AnimationGroup
+from .animation import Frame, Animation, AnimationGroup
 from .lib import num
 from .lib.vect import Vec2i
 
@@ -127,9 +127,13 @@ class AnimatedSprite(Sprite):
                 frame = Frame(self.rect_from_coords(coord_x, coord_y), duration)
             self.animation.animations[name].add_frame(frame)
 
-    def update(self, delta: int):
+    def add_and_load_animation(self, name: str, frames: list, repeat: bool = True):
+        self.animation.add(name, Animation(repeat))
+        self.animation_bunch_frame_load(name, frames)
+
+    def update(self, delta: int) -> bool:
         '''(@AnimatedSprite) Overload Object's update method for updating animation'''
-        self.animation.update(delta)
+        return self.animation.update(delta)
 
     def draw(self, surface: pygame.Surface):
         '''(@AnimatedSprite) Overload SurfaceItem's draw method'''

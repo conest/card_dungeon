@@ -41,7 +41,6 @@ class TileMap(SurfaceItem):
         rect_size_x = self.tileSheet.get_width() // self._Hframes
         rect_size_y = self.tileSheet.get_height() // self._Vframes
         self._frame_rect_size = Vec2i(rect_size_x, rect_size_y)
-        self.size = pygame.Rect((0, 0), (rect_size_x, rect_size_y))
 
     def set_map(self, x: int, y: int, v: int):
         self.grid.set_grid(x, y, v)

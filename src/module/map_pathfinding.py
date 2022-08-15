@@ -1,7 +1,6 @@
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 from engine.lib.tilePos import TilePos, DIR_LOC
-from .map_generator import Terrain
 
 
 class Node:
@@ -68,7 +67,7 @@ def _gen_path(nodeList: list[Node], nodeGrid: NodeGrid) -> list[TilePos]:
     return path
 
 
-def aStar(terrain: GridInt, start: TilePos, target: TilePos) -> list[TilePos]:
+def aStar(terrain: GridInt, wall: int, start: TilePos, target: TilePos) -> list[TilePos]:
     if start == target:
         return []
 
@@ -89,7 +88,7 @@ def aStar(terrain: GridInt, start: TilePos, target: TilePos) -> list[TilePos]:
         for d in DIR_LOC.values():
             ds = TilePos(q.loc.x + d[0], q.loc.y + d[1])
 
-            if terrain.get(ds.x, ds.y) != Terrain.WALL and nodeGrid.get(ds).opened:
+            if terrain.get(ds.x, ds.y) != wall and nodeGrid.get(ds).opened:
                 newNode = Node()
                 newNode.setLocs(ds, q.loc.duplicate())
                 newNode.setGH(q.g + 1, ds.distence(target))
@@ -105,3 +104,7 @@ def aStar(terrain: GridInt, start: TilePos, target: TilePos) -> list[TilePos]:
                 return _gen_path(nodeList, nodeGrid)
 
     return []
+
+
+def bfs(terrain: GridInt, wall: int, start: TilePos, target: TilePos) -> list[TilePos]:
+    pass
