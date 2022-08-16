@@ -72,9 +72,8 @@ class TilePos(Vec2i):
     def toVect(self) -> Vec2i:
         return Vec2i(self.x, self.y)
 
-    def fromVect(self, v: Vec2i):
-        self.x = v.x
-        self.y = v.y
+    def fromVect(self, v: Vec2i) -> TilePos:
+        return TilePos(v.x, v.y)
 
     def duplicate(self) -> TilePos:
         return TilePos(self.x, self.y)

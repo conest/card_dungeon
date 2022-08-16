@@ -42,8 +42,14 @@ class GridInt:
     def set_grid(self, x: int, y: int, v: int):
         self.arr[self._idx(x, y)] = v
 
+    def set_grid_v(self, vec: Vec2i, v: int):
+        self.arr[self._idx(vec.x, vec.y)] = v
+
     def get(self, x: int, y: int) -> int:
         return self.arr[self._idx(x, y)]
+
+    def get_v(self, vec: Vec2i) -> int:
+        return self.arr[self._idx(vec.x, vec.y)]
 
     # Genarate unique ID
     def pairing_id(self, x: int, y: int) -> int:

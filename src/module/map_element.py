@@ -71,13 +71,16 @@ class MapElementManage():
         assert(name not in self.eDict), \
             f'[ERROR] Find MapElement name duplicated: {name} in {self.name}'
 
-    def checkCamera(self) -> bool:
+    def checkCamera(self, name: str):
+        element = self.eDict[name]
+        element.sprite.position = (element.aPos - self.camera.cPositon) * setting.ZOOM
+        spriteSize = (setting.TILE_PIXEL, setting.TILE_PIXEL)
+        elementRect = pygame.Rect(element.aPos.to_tuple_int(), spriteSize)
+        if self.camera.in_camera(elementRect):
+            element.sprite.visible = True
+        else:
+            element.sprite.visible = False
+
+    def checkAllCamera(self) -> bool:
         for name in self.eDict:
-            element = self.eDict[name]
-            element.sprite.position = (element.aPos - self.camera.cPositon) * setting.ZOOM
-            spriteSize = (setting.TILE_PIXEL, setting.TILE_PIXEL)
-            elementRect = pygame.Rect(element.aPos.to_tuple_int(), spriteSize)
-            if self.camera.in_camera(elementRect):
-                element.sprite.visible = True
-            else:
-                element.sprite.visible = False
+            self.checkCamera(name)

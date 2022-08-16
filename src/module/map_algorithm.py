@@ -106,5 +106,81 @@ def aStar(terrain: GridInt, wall: int, start: TilePos, target: TilePos) -> list[
     return []
 
 
-def bfs(terrain: GridInt, wall: int, start: TilePos, target: TilePos) -> list[TilePos]:
-    pass
+def bfsArea(terrain: GridInt, wall: int, pos: TilePos, limit: int = -1) -> list[TilePos]:
+    '''Faster algorithm for check connection and size'''
+    if terrain.get_v(pos) == wall:
+        return []
+
+    limited = True
+    if limit == -1:
+        limited = False
+
+    checkGrid = GridInt(terrain.size().x, terrain.size().y)
+    checkList: list[TilePos] = []
+    vlist: list[TilePos] = []
+
+    checkGrid.set_grid_v(pos, 1)
+    checkList.append(pos)
+
+    while len(checkList) > 0:
+        q = checkList.pop(0)
+        vlist.append(q)
+
+        for d in DIR_LOC.values():
+            ds = TilePos(q.x + d[0], q.y + d[1])
+            if ds.x < 0 or ds.y < 0 or ds.x >= terrain.size().x or ds.y >= terrain.size().y:
+                continue
+            if checkGrid.get_v(ds) == 1:
+                continue
+            if limited and pos.distence(ds) > limit:
+                continue
+            if terrain.get_v(ds) == wall:
+                continue
+            checkList.append(ds)
+            checkGrid.set_grid_v(ds, 1)
+
+    return vlist
+
+
+def bfsPath(terrain: GridInt, wall: int, pos: TilePos, limit: int = -1) -> list[TilePos]:
+    '''for generate a list of location that in a given distance from a position'''
+    if terrain.get_v(pos) == wall:
+        return []
+
+    limited = True
+    if limit == -1:
+        limited = False
+
+    checkGrid = GridInt(terrain.size().x, terrain.size().y)
+    checkList: list[Node] = []
+    vlist: list[TilePos] = []
+
+    startNode = Node()
+    startNode.setLocs(pos, pos)
+    startNode.setGH(0, 0)
+    checkGrid.set_grid_v(pos, 1)
+    checkList.append(startNode)
+
+    while len(checkList) > 0:
+        q = checkList.pop(0)
+        vlist.append(q.loc.duplicate())
+        g = q.g + 1
+
+        for d in DIR_LOC.values():
+            ds = TilePos(q.loc.x + d[0], q.loc.y + d[1])
+            if ds.x < 0 or ds.y < 0 or ds.x >= terrain.size().x or ds.y >= terrain.size().y:
+                continue
+            if checkGrid.get_v(ds) == 1:
+                continue
+            if limited and g > limit:
+                continue
+            if terrain.get_v(ds) == wall:
+                continue
+
+            newNode = Node()
+            newNode.setLocs(ds, q.loc.duplicate())
+            newNode.setGH(g, 0)
+            checkList.append(newNode)
+            checkGrid.set_grid_v(ds, 1)
+
+    return vlist
