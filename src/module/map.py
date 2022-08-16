@@ -7,6 +7,7 @@ from engine.lib.vect import Vec2i
 from engine.tilemap import TileMap
 from engine.sufaceItem import SurfaceItem
 from module import map_generator as mg
+from module import map_tool as tool
 
 
 class Sheet(IntEnum):
@@ -54,3 +55,13 @@ class Map:
 
     def map_generate(self):
         (self.terrain, self.rooms) = mg.generator(self.debug_surface.surface)
+
+    def classify_rooms(self):
+        (mainRooms, isolatedRooms) = tool.classify_rooms(self.terrain, self.rooms)
+        for r in mainRooms:
+            rect = pygame.Rect(r.x * 16 + 8, r.y * 16 + 8, r.w * 16 - 16, r.h * 16 - 16)
+            pygame.draw.rect(self.debug_surface.surface, pygame.Color(255, 255, 0), rect)
+        if len(isolatedRooms) > 0:
+            for r in isolatedRooms:
+                rect = pygame.Rect(r.x * 16 + 8, r.y * 16 + 8, r.w * 16 - 16, r.h * 16 - 16)
+                pygame.draw.rect(self.debug_surface.surface, pygame.Color(0, 255, 255), rect)            

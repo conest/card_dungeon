@@ -8,6 +8,9 @@ class Vec2i:
     def __init__(self, x: int = 0, y: int = 0) -> None:
         self.set(x, y)
 
+    def from_tuple(t: tuple[int, int]) -> Vec2i:
+        return Vec2i(t[0], t[1])
+
     def __str__(self) -> str:
         return f'[Vec2i] (x: {self.x}, y: {self.y})'
 

@@ -14,6 +14,9 @@ class GridInt:
         for _ in range(self.length()):
             self.arr.append(0)
 
+    def from_vect(v: Vec2i) -> GridInt:
+        return GridInt(v.x, v.y)
+
     def __getitem__(self, key: tuple[int, int]) -> int:
         return self.get(key[0], key[1])
 
