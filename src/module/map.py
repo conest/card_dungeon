@@ -61,3 +61,7 @@ class Map:
 
     def _classify_rooms(self):
         (self.mainRooms, self.isolatedRooms) = tool.classify_rooms(self.terrain, self.rooms)
+
+    def player_and_stairs_pos(self) -> tuple[Vec2i, Vec2i]:
+        (vPlayer, vStairs) = tool.player_and_stairs_pos(self.terrain, self.mainRooms)
+        return (vPlayer, vStairs)

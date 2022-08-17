@@ -2,7 +2,7 @@ from typing import Dict
 
 import pygame
 import setting
-from engine.lib.tilePos import TilePos
+from engine.lib.tilePos import TilePos, Direction
 
 from engine.lib.vect import Vec2i, Vec2f
 from engine.sufaceItem import SurfaceItem
@@ -34,13 +34,14 @@ class MapElement:
     def set_absolute_position(self):
         self.aPos = self.pos.to_Vec2f() * setting.TILE_PIXEL
 
-    def move_to(self, x: int, y: int):
-        self.pos = TilePos(x, y)
+    def move_to(self, v: TilePos):
+        self.pos = v
         self.set_absolute_position()
+        self.sprite.position = Vec2f(self.pos.x, self.pos.y) \
+            * setting.TILE_PIXEL * setting.ZOOM
 
-    def move(self, x: int, y: int):
-        self.pos += TilePos(x, y)
-        self.set_absolute_position()
+    def move(self, d: Direction):
+        self.move_to(self.pos.direct(d))
 
 
 class MapElementManage():

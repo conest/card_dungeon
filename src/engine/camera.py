@@ -51,6 +51,9 @@ class Camera(SurfaceItem):
     def move(self, x: float, y: float):
         self.move_to(self.cPositon.x + x, self.cPositon.y + y)
 
+    def moveCenter(self, v: Vec2f):
+        self.move_to(v.x - self.cutSize.x / 2, v.y - self.cutSize.y / 2)
+
     def _scale_surface(self, s: Surface, zoom: float) -> Surface:
         rect = s.get_rect()
         sizex = (rect.w * zoom, rect.h * zoom)

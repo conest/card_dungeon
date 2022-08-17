@@ -65,10 +65,6 @@ class Vec2f:
     def __str__(self) -> str:
         return f'[Vec2f] (x: {self.x}, y: {self.y})'
 
-    def set(self, x: float = 0, y: float = 0) -> None:
-        self.x = x
-        self.y = y
-
     def to_tuple(self) -> tuple:
         return (self.x, self.y)
 
@@ -95,6 +91,10 @@ class Vec2f:
 
     def __floordiv__(self, o) -> Vec2f:
         return Vec2f(self.x // o, self.y // o)
+
+    def set(self, x: float = 0, y: float = 0) -> None:
+        self.x = x
+        self.y = y
 
     def move(self, x, y) -> None:
         self.x += x

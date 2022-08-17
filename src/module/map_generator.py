@@ -15,13 +15,18 @@ TILE_PIXEL = setting.TILE_PIXEL
 
 
 class Terrain(IntEnum):
+    EMPTY = 0
     PATH = 1
     ROOM = 2
-    DOOR = 3
-    FOYER = 4
+    DOOR = 11
+    FOYER = 12
 
-    WALL = 11
+    WALL = 21
+    STAIRS = 30
     BORDER = 99
+
+    PLAYER = 100
+    ENEMY = 101
 
 
 def generator(debug_surface: pygame.Surface) -> tuple[GridInt, list]:

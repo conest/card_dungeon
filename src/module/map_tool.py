@@ -9,30 +9,26 @@ from module.map_generator import Terrain
 from module import map_algorithm as algorithm
 
 
-def random_avaliable_pos(terrain: GridInt, rect: Rect = None) -> Vec2i:
+def random_avaliable_pos(terrain: GridInt, rect: Rect = None, okTerrain: list[Terrain] = None) -> Vec2i:
     TRY_TIMES = 100
-    nopeTerrain = [
-        Terrain.WALL,
-        Terrain.DOOR,
-        Terrain.FOYER,
-    ]
+
+    if okTerrain is None:
+        okTerrain = [
+            Terrain.EMPTY,
+            Terrain.PATH,
+            Terrain.ROOM,
+        ]
 
     if rect is None:
         rect = Rect(0, 0, setting.MAP_SIZE_X - 1, setting.MAP_SIZE_Y - 1)
 
-    count = TRY_TIMES
-    while(count > 0):
-        count -= 1
+    for _ in range(TRY_TIMES):
         rx = random.randint(rect.x, rect.x + rect.w)
         ry = random.randint(rect.y, rect.y + rect.h)
-
-        nope = False
-        for t in nopeTerrain:
+        for t in okTerrain:
             if terrain.get(rx, ry) == t:
-                nope = True
-                break
-        if not nope:
-            return Vec2i(rx, ry)
+                return Vec2i(rx, ry)
+
     print('[WARNING] failed gen pos at random_avaliable_pos')
     return None
 
@@ -70,6 +66,12 @@ def classify_rooms(terrain: GridInt, rooms: list[Rect]) -> tuple[list, list]:
     return (groupedRooms[0], isolatedRoom)
 
 
-def gen_start_and_stairs(terrain: GridInt, rooms: list[Rect]) -> tuple[Vec2i, Vec2i]:
+def player_and_stairs_pos(terrain: GridInt, rooms: list[Rect]) -> tuple[Vec2i, Vec2i]:
     '''Return (start, stairs)'''
-    pass
+    [pRoom, sRoom] = random.choices(rooms, k=2)
+    vPlayer = random_avaliable_pos(terrain, rect=pRoom)
+    vStairs = random_avaliable_pos(terrain, rect=sRoom)
+    terrain.set_grid_v(vPlayer, Terrain.PLAYER)
+    terrain.set_grid_v(vStairs, Terrain.STAIRS)
+
+    return (vPlayer, vStairs)

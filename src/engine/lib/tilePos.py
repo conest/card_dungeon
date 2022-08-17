@@ -58,6 +58,9 @@ class TilePos(Vec2i):
     def __str__(self) -> str:
         return f'[TilePos] (x: {self.x}, y: {self.y})'
 
+    def from_vect2i(v: Vec2i) -> TilePos:
+        return TilePos(v.x, v.y)
+
     def direct(self, d: Direction) -> TilePos:
         loc = DIR_LOC[d]
         return TilePos(self.x + loc[0], self.y + loc[1])
@@ -71,9 +74,6 @@ class TilePos(Vec2i):
 
     def toVect(self) -> Vec2i:
         return Vec2i(self.x, self.y)
-
-    def fromVect(self, v: Vec2i) -> TilePos:
-        return TilePos(v.x, v.y)
 
     def duplicate(self) -> TilePos:
         return TilePos(self.x, self.y)

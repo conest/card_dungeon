@@ -6,10 +6,9 @@ from engine.lib.vect import Vec2f
 from engine.lib.num import approach
 from engine.lib.tilePos import TilePos
 from engine.resource import resource
-from engine.sufaceItem import SurfaceItem
 from engine.sprite import AnimatedSprite
-from engine.animation import Animation
 from module.map_element import MapElement
+from module.map import Map
 
 
 class Status(Enum):
@@ -22,6 +21,7 @@ class Player(MapElement):
     NAME = "player"
 
     status: Status
+    mapClass: Map
 
     def __init__(self):
         resource.add_surface(Player.NAME, "assets/Dwarves.png")
@@ -37,10 +37,9 @@ class Player(MapElement):
     def __str__(self) -> str:
         return "[Player]"
 
-    def move(self, x: int, y: int):
-        self.pos += TilePos(x, y)
-        self.sprite.position = Vec2f(self.pos.x, self.pos.y) \
-            * setting.TILE_PIXEL * setting.ZOOM
+    def centerAPos(self) -> Vec2f:
+        halfTile = setting.TILE_PIXEL / 2
+        return self.aPos + Vec2f(halfTile, halfTile)
 
     def _load_animation(self):
         player = self.sprite
