@@ -6,6 +6,9 @@ from .lib.vect import Vec2i, Vec2f
 from .lib.num import clip
 
 
+FOCUS_SIZE_RATIO = 3
+
+
 class Camera(SurfaceItem):
     mag: int
     '''Magnification'''
@@ -16,6 +19,7 @@ class Camera(SurfaceItem):
     border: bool
     '''Restrict the camera in the source's surface'''
     cutSize: Vec2i
+    focusSize: Vec2i
 
     def __init__(self, cameraSize: Vec2i, mag: int = 1, border: bool = False):
         super().__init__()
@@ -30,6 +34,7 @@ class Camera(SurfaceItem):
             mag = 1
         self.mag = mag
         self.cutSize = Vec2i(int(self.size.w / self.mag), int(self.size.h / self.mag))
+        self.focusSize = self.cutSize / FOCUS_SIZE_RATIO
 
     def load_source(self, si: SurfaceItem):
         self.source = si
@@ -65,6 +70,20 @@ class Camera(SurfaceItem):
         sourceCut = Surface(cutSize, pygame.SRCALPHA)
         sourceCut.blit(self.source.surface, (0, 0), blitArea)
         self.surface = self._scale_surface(sourceCut, self.mag)
+
+    def onFocus(self, v: Vec2f):
+        focusPos: Vec2i = self.cPositon.to_Vec2i() + (self.cutSize - self.focusSize) / 2
+        focusRect = pygame.Rect(focusPos.to_tuple(), self.focusSize.to_tuple())
+        if focusRect.collidepoint(v.x, v.y):
+            return
+        if v.x < focusRect.x:
+            self.move(v.x - focusRect.x, 0)
+        if v.x > focusRect.right:
+            self.move(v.x - focusRect.right + 1, 0)
+        if v.y < focusRect.y:
+            self.move(0, v.y - focusRect.y)
+        if v.y > focusRect.bottom:
+            self.move(0, v.y - focusRect.bottom + 1)
 
     def camera_rect(self) -> pygame.Rect:
         return pygame.Rect(self.cPositon.to_tuple_int(), self.cutSize.to_tuple())
