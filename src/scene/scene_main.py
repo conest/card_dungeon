@@ -21,7 +21,6 @@ def init(self: Scene):
     map.tilemap_load_resource(resource.surface("tilesheet"), 16, 23)
     map.map_generate()
     map.draw_map()
-    map.classify_rooms()
 
     self.objects["map"] = map
 
@@ -30,9 +29,7 @@ def init(self: Scene):
     camera.add_source(map.si())
     camera.update_surface()
     self.objects["map_camera"] = camera
-    # self.surfaceList.add(camera)
-    self.surfaceList.add(map.tilemap)
-    self.surfaceList.add(map.debug_surface)
+    self.surfaceList.add(camera)
 
     player = Player()
     player.move_to(11, 11)

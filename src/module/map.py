@@ -25,6 +25,8 @@ class Map:
     tilemap: TileMap
     terrain: GridInt
     rooms: list[pygame.Rect]
+    mainRooms: list[pygame.Rect]
+    isolatedRooms: list[pygame.Rect]
 
     debug_surface: SurfaceItem
 
@@ -55,13 +57,7 @@ class Map:
 
     def map_generate(self):
         (self.terrain, self.rooms) = mg.generator(self.debug_surface.surface)
+        self._classify_rooms()
 
-    def classify_rooms(self):
-        (mainRooms, isolatedRooms) = tool.classify_rooms(self.terrain, self.rooms)
-        for r in mainRooms:
-            rect = pygame.Rect(r.x * 16 + 8, r.y * 16 + 8, r.w * 16 - 16, r.h * 16 - 16)
-            pygame.draw.rect(self.debug_surface.surface, pygame.Color(255, 255, 0), rect)
-        if len(isolatedRooms) > 0:
-            for r in isolatedRooms:
-                rect = pygame.Rect(r.x * 16 + 8, r.y * 16 + 8, r.w * 16 - 16, r.h * 16 - 16)
-                pygame.draw.rect(self.debug_surface.surface, pygame.Color(0, 255, 255), rect)            
+    def _classify_rooms(self):
+        (self.mainRooms, self.isolatedRooms) = tool.classify_rooms(self.terrain, self.rooms)

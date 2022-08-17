@@ -37,11 +37,6 @@ def random_avaliable_pos(terrain: GridInt, rect: Rect = None) -> Vec2i:
     return None
 
 
-def gen_start_and_stairs(terrain: GridInt, rooms: list[Rect]) -> tuple[Vec2i, Vec2i]:
-    '''Return (start, stairs)'''
-    pass
-
-
 def classify_rooms(terrain: GridInt, rooms: list[Rect]) -> tuple[list, list]:
     '''Return (Bigest room chain, isolated rooms)'''
     checkMap: GridInt = GridInt.from_vect(terrain.size())
@@ -73,3 +68,8 @@ def classify_rooms(terrain: GridInt, rooms: list[Rect]) -> tuple[list, list]:
         for ii in range(len(groupedRooms[i])):
             isolatedRoom.append(groupedRooms[i][ii])
     return (groupedRooms[0], isolatedRoom)
+
+
+def gen_start_and_stairs(terrain: GridInt, rooms: list[Rect]) -> tuple[Vec2i, Vec2i]:
+    '''Return (start, stairs)'''
+    pass
