@@ -44,6 +44,10 @@ class MapElement:
     def set_absolute_position(self):
         self.aPos = self.pos.to_Vec2f() * setting.TILE_PIXEL
 
+    def centerAPos(self) -> Vec2f:
+        halfTile = setting.TILE_PIXEL / 2
+        return self.aPos + Vec2f(halfTile, halfTile)
+
     def move_to(self, v: TilePos):
         self.pos = v
         self.set_absolute_position()

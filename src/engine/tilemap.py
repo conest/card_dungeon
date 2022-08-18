@@ -64,6 +64,16 @@ class TileMap(SurfaceItem):
             sur_rect = self._rect_to_surface(loc.x, loc.y)
             self.surface.blit(self.tileSheet, sur_rect, sheet_rect)
 
+    def update_surface_on_tile(self, v: Vec2i):
+        idx = self.dirty_grid._idx(v.x, v.y)
+        if self.dirty_grid.arr[idx] == 0:
+            return
+        self.dirty_grid.arr[idx] = 0
+        loc = self.grid.loc_from_idx(idx)
+        sheet_rect = self._rect_from_frame(self.grid.get_v(v))
+        sur_rect = self._rect_to_surface(loc.x, loc.y)
+        self.surface.blit(self.tileSheet, sur_rect, sheet_rect)
+
     def _rect_to_surface(self, x: int, y: int) -> pygame.Rect:
         sx = x * self.tileSize
         sy = y * self.tileSize

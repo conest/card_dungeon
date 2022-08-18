@@ -5,7 +5,7 @@ import setting
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 
-from module.map_generator import Terrain
+from module.map_terrain import Terrain
 from module import map_algorithm as algorithm
 
 

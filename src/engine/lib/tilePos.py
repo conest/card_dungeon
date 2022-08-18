@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Dict
 
 from enum import IntEnum
 from .vect import Vec2i
@@ -22,7 +23,7 @@ class Direction8(IntEnum):
     DOWN_LEFT = 8
 
 
-DIR_LOC = {
+DIR_LOC: Dict[Direction, tuple] = {
     Direction.UP: (0, -1),
     Direction.DOWN: (0, 1),
     Direction.LEFT: (-1, 0),
@@ -30,7 +31,7 @@ DIR_LOC = {
 }
 
 
-LOC_DIR = {
+LOC_DIR: Dict[tuple, Direction] = {
     (0, -1): Direction.UP,
     (0, 1): Direction.DOWN,
     (-1, 0): Direction.LEFT,
@@ -77,3 +78,11 @@ class TilePos(Vec2i):
 
     def duplicate(self) -> TilePos:
         return TilePos(self.x, self.y)
+
+
+D_TILEPOS: Dict[Direction, TilePos] = {
+    Direction.UP: TilePos(0, -1),
+    Direction.DOWN: TilePos(0, 1),
+    Direction.LEFT: TilePos(-1, 0),
+    Direction.RIGHT: TilePos(1, 0),
+}

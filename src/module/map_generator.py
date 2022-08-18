@@ -1,6 +1,4 @@
 import random
-from enum import IntEnum
-
 import pygame
 import setting
 
@@ -8,25 +6,12 @@ from pygame import Rect
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 from engine.lib.tilePos import Direction, TilePos
+from module.map_terrain import Terrain
+
 
 MAP_SIZE_X = setting.MAP_SIZE_X
 MAP_SIZE_Y = setting.MAP_SIZE_Y
 TILE_PIXEL = setting.TILE_PIXEL
-
-
-class Terrain(IntEnum):
-    EMPTY = 0
-    PATH = 1
-    ROOM = 2
-    DOOR = 11
-    FOYER = 12
-
-    WALL = 21
-    STAIRS = 30
-    BORDER = 99
-
-    PLAYER = 100
-    ENEMY = 101
 
 
 def generator(debug_surface: pygame.Surface) -> tuple[GridInt, list]:

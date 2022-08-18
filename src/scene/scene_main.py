@@ -42,6 +42,7 @@ class GameScene(Scene):
 
         windowSize = Vec2i(setting.WINDOW_SIZE[0], setting.WINDOW_SIZE[1])
         camera = CameraStack(windowSize, setting.ZOOM, True)
+        camera.zIndex = -1
         camera.add_source(mapClass.si())
         camera.update_surface()
         self.objects["map_camera"] = camera
@@ -50,9 +51,10 @@ class GameScene(Scene):
         player = Player()
         self.player = player
         player.mapClass = mapClass
-        (playerPos, _) = mapClass.player_and_stairs_pos()
-        player.move_to(TilePos.from_vect2i(playerPos))
         self.surfaceList.add(player.sprite)
+
+        playerPos = mapClass.player_and_stairs_pos()
+        player.move_to(TilePos.from_vect2i(playerPos))
 
         camera.moveCenter(player.centerAPos())
 
@@ -62,17 +64,18 @@ class GameScene(Scene):
         mem.checkCamera(player.name)
 
         # DEBUG
-        # self.surfaceList.add(map.tilemap)
+        # self.surfaceList.add(mapClass.tilemap)
 
     def player_set_moving(self, d: Direction):
+        if not self.player.check_move(d):
+            return
         self.stage = Stage.MOVING
         self.movingCount = 0
         movingVect = Vec2f.from_tuple(DIR_LOC[d])
-        movingDes = Vec2i.from_tuple(DIR_LOC[d]) + self.player.pos
+        movingDes = self.player.pos.direct(d)
         self.player.set_moving(movingVect, movingDes)
 
     def moving(self, delta: int):
-        # TODO
         self.movingCount += MOVING_SPEED * delta
         if self.movingCount >= setting.TILE_PIXEL:
             self.player.reached()

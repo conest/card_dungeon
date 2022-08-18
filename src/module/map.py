@@ -1,4 +1,4 @@
-from enum import IntEnum
+from typing import Dict
 
 import pygame
 import setting
@@ -7,11 +7,14 @@ from engine.lib.vect import Vec2i
 from engine.tilemap import TileMap
 from engine.sufaceItem import SurfaceItem
 from module import map_generator as mg
+from module.map_terrain import Terrain
 from module import map_tool as tool
 
 
-class Sheet(IntEnum):
-    WALL = 241
+SHEET: Dict[Terrain, int] = {
+    Terrain.WALL: 241,
+    Terrain.STAIRS: 7,
+}
 
 
 MAP_SIZE_X = setting.MAP_SIZE_X
@@ -48,12 +51,17 @@ class Map:
 
     def sync_map(self):
         for i, t in enumerate(self.terrain.arr):
-            if t == mg.Terrain.WALL:
-                self.tilemap.set_map_direct(i, Sheet.WALL)
+            if t == Terrain.WALL:
+                self.tilemap.set_map_direct(i, SHEET[t])
 
     def draw_map(self):
         self.sync_map()
         self.tilemap.update_surface()
+
+    def sync_and_draw_on_tile(self, v: Vec2i):
+        t = self.terrain.get_v(v)
+        self.tilemap.set_map(v.x, v.y, SHEET[t])
+        self.tilemap.update_surface_on_tile(v)
 
     def map_generate(self):
         (self.terrain, self.rooms) = mg.generator(self.debug_surface.surface)
@@ -62,6 +70,8 @@ class Map:
     def _classify_rooms(self):
         (self.mainRooms, self.isolatedRooms) = tool.classify_rooms(self.terrain, self.rooms)
 
-    def player_and_stairs_pos(self) -> tuple[Vec2i, Vec2i]:
+    def player_and_stairs_pos(self) -> Vec2i:
         (vPlayer, vStairs) = tool.player_and_stairs_pos(self.terrain, self.mainRooms)
-        return (vPlayer, vStairs)
+        self.terrain.set_grid_v(vStairs, Terrain.STAIRS)
+        self.sync_and_draw_on_tile(vStairs)
+        return vPlayer
