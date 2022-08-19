@@ -1,15 +1,18 @@
-import setting
 from engine.resource import resource
-from module.creature import Creature
+from creature.creature import Creature
 from engine.sprite import AnimatedSprite
+from module.map import Map
+from creature.kind import Kind
 
 
 class Snake(Creature):
     NAME = "Snake"
+    KIND = Kind.Snake
 
-    def __init__(self, name: str, resourceName: str):
-        super().__init__(name, AnimatedSprite(resource.surface(resourceName)))
+    def __init__(self, name: str, resourceName: str, m: Map):
+        super().__init__(name, AnimatedSprite(resource.surface(resourceName)), m)
 
+        self.kind = Snake.KIND
         self.sprite.set_framesHV(20, 7)
         self._load_animation()
 

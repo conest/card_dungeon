@@ -1,9 +1,14 @@
 from enum import Enum, auto
 
 import setting
+from engine.lib.vect import Vec2i, Vec2f
 from engine.resource import resource
 from engine.sprite import AnimatedSprite
-from module.creature import Creature
+from engine.lib.tilePos import TilePos, Direction, DIR_LOC
+
+from creature.creature import Creature
+from creature.kind import Kind
+from module.map import Map
 
 
 class Status(Enum):
@@ -17,11 +22,12 @@ class Player(Creature):
 
     status: Status
 
-    def __init__(self):
+    def __init__(self, mapClass: Map):
         resource.add_surface(Player.NAME, "assets/Dwarves.png")
         resource.scale_surface(Player.NAME, setting.ZOOM)
-        super().__init__(Player.NAME, AnimatedSprite(resource.surface("player")))
+        super().__init__(Player.NAME, AnimatedSprite(resource.surface("player")), mapClass)
 
+        self.kind = Kind.Player
         self.sprite.name = Player.NAME
         self.sprite.set_framesHV(25, 6)
         self._load_animation()
@@ -38,3 +44,10 @@ class Player(Creature):
         player.add_and_load_animation("idle", frames, True)
 
         player.animation.play("idle")
+
+    def set_move(self, d: Direction):
+        movingVect = Vec2f.from_tuple(DIR_LOC[d])
+        movingDes = self.pos.direct(d)
+        self.set_moving(movingVect, movingDes)
+        self.mapClass.creatureMap.set_grid_v(self.pos, 0)
+        self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)

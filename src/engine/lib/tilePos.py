@@ -6,10 +6,10 @@ from .vect import Vec2i
 
 
 class Direction(IntEnum):
-    UP = 1
-    RIGHT = 2
-    DOWN = 3
-    LEFT = 4
+    UP = 0
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
 
 
 class Direction8(IntEnum):

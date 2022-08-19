@@ -2,7 +2,7 @@ from typing import Dict
 
 import pygame
 import setting
-from engine.lib.tilePos import TilePos, Direction
+from engine.lib.tilePos import TilePos
 
 from engine.lib.vect import Vec2i, Vec2f
 from engine.sufaceItem import SurfaceItem
@@ -13,8 +13,6 @@ MAP_SIZE_X = setting.MAP_SIZE_X
 MAP_SIZE_Y = setting.MAP_SIZE_Y
 TILE_PIXEL = setting.TILE_PIXEL
 
-MOVING_SPEED = 0.1
-
 
 class MapElement:
     name: str
@@ -23,10 +21,6 @@ class MapElement:
     sprite: SurfaceItem
     inMist: bool
 
-    movingVect: Vec2f
-    movingDes: TilePos
-    movingCount: float
-
     def __init__(self, name: str, sprite: SurfaceItem):
         self.name = name
         self.pos = TilePos()
@@ -34,10 +28,6 @@ class MapElement:
         self.sprite = sprite
         self.sprite.name = name
         self.inMist = True
-
-        self.movingVect = Vec2f()
-        self.movingDes = TilePos()
-        self.movingCount = 0
 
     def __str__(self) -> str:
         return f'[MapElement] {self.name}, loc: {self.loc}'
@@ -48,27 +38,6 @@ class MapElement:
     def centerAPos(self) -> Vec2f:
         halfTile = setting.TILE_PIXEL / 2
         return self.aPos + Vec2f(halfTile, halfTile)
-
-    def move_to(self, v: TilePos):
-        self.pos = v
-        self.set_absolute_position()
-        self.sprite.position = Vec2f(self.pos.x, self.pos.y) \
-            * setting.TILE_PIXEL * setting.ZOOM
-
-    def move(self, d: Direction):
-        self.move_to(self.pos.direct(d))
-
-    def set_moving(self, movingVect: Vec2f, des: TilePos):
-        self.movingVect = movingVect * MOVING_SPEED
-        self.movingDes = des
-
-    def moving(self, delta: int):
-        mv = self.movingVect * delta
-        self.aPos += mv
-        self.sprite.position += mv
-
-    def reached(self):
-        self.move_to(self.movingDes)
 
 
 class MapElementManage():

@@ -1,7 +1,7 @@
 import pygame
 
 WINDOW_SIZE = (800, 450)
-WINDOW_SIZE = (800, 800)
+# WINDOW_SIZE = (800, 800)
 
 WINDOW_FLAG = pygame.RESIZABLE
 # WINDOW_FLAG = pygame.RESIZABLE | pygame.SCALED
