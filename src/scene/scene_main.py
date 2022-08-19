@@ -4,7 +4,6 @@ import pygame
 
 from engine.lib.vect import Vec2i, Vec2f
 from engine.lib.tilePos import TilePos, Direction, DIR_LOC
-
 from engine.scene import Scene, SceneSignal
 from engine.resource import resource
 from engine.camera import CameraStack
@@ -14,6 +13,7 @@ from scene.keys import readkey
 from module.map import Map
 from module.player import Player
 from module.map_element import MapElementManage, MOVING_SPEED
+from enemy import enemy_tool as etool
 
 
 class Stage(Enum):
@@ -24,6 +24,8 @@ class Stage(Enum):
 class GameScene(Scene):
 
     stage: Stage
+
+    mem: MapElementManage
     player: Player
     movingCount: float
 
@@ -32,10 +34,12 @@ class GameScene(Scene):
         self.movingVect = Vec2f()
         self.movingCount = 0
 
-        resource.add_surface("tilesheet", "assets/DungeonTileset.png")
+        resource.add_surface("DungeonTileset", "assets/DungeonTileset.png")
+        resource.add_surface("animalsheet", "assets/AnimalsSheet.png")
+        resource.scale_surface("animalsheet", setting.ZOOM)
 
         mapClass = Map()
-        mapClass.tilemap_load_resource(resource.surface("tilesheet"), 16, 23)
+        mapClass.tilemap_load_resource(resource.surface("DungeonTileset"), 16, 23)
         mapClass.map_generate()
         mapClass.draw_map()
         self.objects["map"] = mapClass
@@ -59,9 +63,14 @@ class GameScene(Scene):
         camera.moveCenter(player.centerAPos())
 
         mem = MapElementManage(camera)
-        self.objects[MapElementManage.NAME] = mem
+        self.mem = mem
         mem.add(player)
-        mem.checkCamera(player.name)
+
+        eList = etool.gen_enemies(mapClass.terrain, mapClass.creatureMap)
+        for e in eList:
+            self.surfaceList.add(e.sprite)
+            mem.add(e)
+        mem.checkAllCamera()
 
         # DEBUG
         # self.surfaceList.add(mapClass.tilemap)
@@ -83,7 +92,7 @@ class GameScene(Scene):
         else:
             self.player.moving(delta)
         self.objects["map_camera"].onFocus(self.player.centerAPos())
-        self.objects[MapElementManage.NAME].checkAllCamera()
+        self.mem.checkAllCamera()
 
     def event_handle(self, event: pygame.event.Event, delta: int):
         if self.stage != Stage.IDLE:

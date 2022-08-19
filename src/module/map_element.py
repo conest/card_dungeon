@@ -32,6 +32,7 @@ class MapElement:
         self.pos = TilePos()
         self.aPos = Vec2f()
         self.sprite = sprite
+        self.sprite.name = name
         self.inMist = True
 
         self.movingVect = Vec2f()

@@ -19,7 +19,6 @@ class Creature(MapElement):
 
     def __init__(self, name: str, sprite: SurfaceItem):
         super().__init__(name, sprite)
-        self.sprite.name = Creature.NAME
 
     def __str__(self) -> str:
         return f'[Creature] {self.name}'

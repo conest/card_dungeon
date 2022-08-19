@@ -21,8 +21,8 @@ def generator(debug_surface: pygame.Surface) -> tuple[GridInt, list]:
     rooms = []
 
     def gen_rooms():
-        ROOM_TRYING_NUM = 200
-        ROOM_SIZE_MAX_X = 10
+        ROOM_TRYING_NUM = 150
+        ROOM_SIZE_MAX_X = 8
         ROOM_SIZE_MIN_X = 4
         ROOM_SIZE_MAX_Y = 8
         ROOM_SIZE_MIN_Y = 4

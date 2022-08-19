@@ -27,6 +27,8 @@ class Map:
     size: Vec2i
     tilemap: TileMap
     terrain: GridInt
+    creatureMap: GridInt
+
     rooms: list[pygame.Rect]
     mainRooms: list[pygame.Rect]
     isolatedRooms: list[pygame.Rect]
@@ -37,6 +39,7 @@ class Map:
         self.size = Vec2i(MAP_SIZE_X, MAP_SIZE_Y)
         self.tilemap = TileMap(MAP_SIZE_X, MAP_SIZE_Y, TILE_PIXEL)
         self.terrain = GridInt(MAP_SIZE_X, MAP_SIZE_Y)
+        self.creatureMap = GridInt(MAP_SIZE_X, MAP_SIZE_Y)
         self.rooms = []
 
         self.debug_surface = SurfaceItem()
