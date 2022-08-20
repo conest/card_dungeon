@@ -119,3 +119,9 @@ class CreatureGroup:
     def reached(self):
         for c in self.creatures.values():
             c.reached()
+
+    def get_by_pos(self, pos: TilePos) -> Creature:
+        for e in self.creatures.values():
+            if e.pos == pos:
+                return e
+        return None

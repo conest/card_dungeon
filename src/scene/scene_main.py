@@ -12,7 +12,7 @@ import setting
 
 from scene.keys import readkey
 from module.map import Map
-from module.player import Player
+from module.player import Player, Behavior
 from module.map_element import MapElementManage
 from creature import enemy_tool as etool
 from creature.creature import CreatureGroup
@@ -28,6 +28,7 @@ class GameScene(Scene):
 
     stage: Stage
 
+    mapClass: Map
     mem: MapElementManage
     '''All the elements'''
     enemies: CreatureGroup
@@ -48,7 +49,7 @@ class GameScene(Scene):
         mapClass.tilemap_load_resource(resource.surface("DungeonTileset"), 16, 23)
         mapClass.map_generate()
         mapClass.draw_map()
-        self.objects["map"] = mapClass
+        self.mapClass = mapClass
 
         windowSize = Vec2i(setting.WINDOW_SIZE[0], setting.WINDOW_SIZE[1])
         camera = CameraStack(windowSize, setting.ZOOM, True)
@@ -83,13 +84,16 @@ class GameScene(Scene):
         # self.surfaceList.add(mapClass.tilemap)
 
     def player_try_move(self, d: Direction):
-        if not self.player.check_move(d):
-            return
-        self.player.set_move(d)
-
-        self.stage = Stage.MOVING
-        self.movingCount = 0
-        self.enemies.random_move()
+        match self.player.check_attack_move(d):
+            case Behavior.MOVE:
+                self.player.set_move(d)
+                self.stage = Stage.MOVING
+                self.movingCount = 0
+                self.enemies.random_move()
+            case Behavior.ATTACK:
+                pos = self.player.pos.direct(d)
+                target = self.enemies.get_by_pos(pos)
+                print(f"attack: {target.name}")
 
     def event_handle(self, event: pygame.event.Event, delta: int):
         if self.stage != Stage.IDLE:

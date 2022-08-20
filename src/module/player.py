@@ -9,18 +9,17 @@ from engine.lib.tilePos import TilePos, Direction, DIR_LOC
 from creature.creature import Creature
 from creature.kind import Kind
 from module.map import Map
+from module.map_terrain import Terrain
 
 
-class Status(Enum):
+class Behavior(Enum):
     IDLE = auto()
-    WALK = auto()
+    MOVE = auto()
     ATTACK = auto()
 
 
 class Player(Creature):
     NAME = "player"
-
-    status: Status
 
     def __init__(self, mapClass: Map):
         resource.add_surface(Player.NAME, "assets/Dwarves.png")
@@ -31,8 +30,6 @@ class Player(Creature):
         self.sprite.name = Player.NAME
         self.sprite.set_framesHV(25, 6)
         self._load_animation()
-
-        self.status = Status.IDLE
 
     def __str__(self) -> str:
         return "[Player]"
@@ -51,3 +48,11 @@ class Player(Creature):
         self.set_moving(movingVect, movingDes)
         self.mapClass.creatureMap.set_grid_v(self.pos, 0)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
+
+    def check_attack_move(self, d: Direction) -> Behavior:
+        newLoc = self.pos.direct(d)
+        if self.mapClass.creatureMap.get_v(newLoc) != Kind.Nothing:
+            return Behavior.ATTACK
+        if self.mapClass.terrain.get_v(newLoc) == Terrain.WALL:
+            return Behavior.IDLE
+        return Behavior.MOVE
