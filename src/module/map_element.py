@@ -3,9 +3,9 @@ from typing import Dict
 import pygame
 import setting
 from engine.lib.tilePos import TilePos
-
 from engine.lib.vect import Vec2i, Vec2f
-from engine.sufaceItem import SurfaceItem
+from engine.object import Object
+from engine.surfaceItem import SurfaceItem
 from engine.camera import Camera
 
 
@@ -14,14 +14,14 @@ MAP_SIZE_Y = setting.MAP_SIZE_Y
 TILE_PIXEL = setting.TILE_PIXEL
 
 
-class MapElement:
-    name: str
+class MapElement(Object):
     pos: TilePos
     aPos: Vec2f
     sprite: SurfaceItem
     inMist: bool
 
     def __init__(self, name: str, sprite: SurfaceItem):
+        super().__init__()
         self.name = name
         self.pos = TilePos()
         self.aPos = Vec2f()

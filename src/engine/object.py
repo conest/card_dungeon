@@ -9,8 +9,6 @@ class Object:
     def __init__(self):
         self.name = "Default_Object_Name"
         self.signals = SignalGroup()
-        self.attribute = {}
-        self.hitbox = None
 
     def __str__(self) -> str:
         return f'[Object] {self.name}'

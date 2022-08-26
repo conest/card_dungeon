@@ -5,7 +5,7 @@ import setting
 from engine.lib.grid import GridInt
 from engine.lib.vect import Vec2i
 from engine.tilemap import TileMap
-from engine.sufaceItem import SurfaceItem
+from engine.surfaceItem import SurfaceItem
 from module import map_generator as mg
 from module.map_terrain import Terrain
 from module import map_tool as tool

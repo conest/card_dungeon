@@ -29,6 +29,9 @@ class SurfaceItem(Object):
     def set_position(self, x: float, y: float):
         self.position.set(x, y)
 
+    def set_position_v(self, v: Vec2f):
+        self.position = v
+
     def surface_size(self) -> pygame.Rect:
         return self.surface.get_rect()
 

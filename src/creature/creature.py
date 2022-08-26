@@ -7,13 +7,14 @@ from engine.lib.tilePos import Direction
 from engine.lib.vect import Vec2i, Vec2f
 from engine.lib.tilePos import TilePos, Direction, DIR_LOC
 
-from engine.sufaceItem import SurfaceItem
+from engine.surfaceItem import SurfaceItem
 from module.map_element import MapElement
 from module.map_terrain import Terrain
 from module.map import Map
 from creature.kind import Kind
 
 MOVING_SPEED = 0.1
+ATTACK_SPEED = 0.1
 
 
 class Creature(MapElement):

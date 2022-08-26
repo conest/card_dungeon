@@ -12,7 +12,7 @@ from module.map import Map
 from module.map_terrain import Terrain
 
 
-class Behavior(Enum):
+class PlayBehavior(Enum):
     IDLE = auto()
     MOVE = auto()
     ATTACK = auto()
@@ -49,10 +49,10 @@ class Player(Creature):
         self.mapClass.creatureMap.set_grid_v(self.pos, 0)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
 
-    def check_attack_move(self, d: Direction) -> Behavior:
+    def check_attack_move(self, d: Direction) -> PlayBehavior:
         newLoc = self.pos.direct(d)
         if self.mapClass.creatureMap.get_v(newLoc) != Kind.Nothing:
-            return Behavior.ATTACK
+            return PlayBehavior.ATTACK
         if self.mapClass.terrain.get_v(newLoc) == Terrain.WALL:
-            return Behavior.IDLE
-        return Behavior.MOVE
+            return PlayBehavior.IDLE
+        return PlayBehavior.MOVE

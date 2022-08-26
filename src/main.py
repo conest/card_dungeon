@@ -5,7 +5,8 @@ import setting
 
 
 def main():
-    engine.main.init(setting.WINDOW_SIZE, setting.WINDOW_FLAG, setting.WINDOW_CAPTION)
+    engine.main.init(setting.WINDOW_SIZE, setting.WINDOW_FLAG, setting.WINDOW_CAPTION, vsync=0)
+    engine.main.set_fps(setting.FPS)
 
     gameScene.init()
 

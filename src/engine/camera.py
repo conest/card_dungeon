@@ -1,7 +1,7 @@
 import pygame
 from pygame import Surface
 
-from .sufaceItem import SurfaceItem, SurfaceList
+from .surfaceItem import SurfaceItem, SurfaceList
 from .lib.vect import Vec2i, Vec2f
 from .lib.num import clip
 

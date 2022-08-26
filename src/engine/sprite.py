@@ -1,6 +1,6 @@
 from __future__ import annotations
 import pygame
-from .sufaceItem import SurfaceItem
+from .surfaceItem import SurfaceItem
 from .animation import Frame, Animation, AnimationGroup
 from .lib import num
 from .lib.vect import Vec2i

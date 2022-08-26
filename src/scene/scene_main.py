@@ -2,7 +2,7 @@ from enum import Enum, auto
 
 import pygame
 
-from engine.lib.vect import Vec2i, Vec2f
+from engine.lib.vect import Vec2i
 from engine.lib.tilePos import TilePos, Direction
 from engine.scene import Scene, SceneSignal
 from engine.resource import resource
@@ -12,11 +12,11 @@ import setting
 
 from scene.keys import readkey
 from module.map import Map
-from module.player import Player, Behavior
+from module.player import Player
 from module.map_element import MapElementManage
+from module.action import Act, Action
 from creature import enemy_tool as etool
 from creature.creature import CreatureGroup
-from creature.creature import MOVING_SPEED
 
 
 class Stage(Enum):
@@ -26,10 +26,10 @@ class Stage(Enum):
 
 class GameScene(Scene):
 
-    stage: Stage
+    action: Action
 
     mapClass: Map
-    mem: MapElementManage
+    elements: MapElementManage
     '''All the elements'''
     enemies: CreatureGroup
     ''' Enemy Group'''
@@ -37,10 +37,6 @@ class GameScene(Scene):
     movingCount: float
 
     def init(self):
-        self.stage = Stage.IDLE
-        self.movingVect = Vec2f()
-        self.movingCount = 0
-
         resource.add_surface("DungeonTileset", "assets/DungeonTileset.png")
         resource.add_surface("animalsheet", "assets/AnimalsSheet.png")
         resource.scale_surface("animalsheet", setting.ZOOM)
@@ -68,35 +64,31 @@ class GameScene(Scene):
 
         camera.moveCenter(player.centerAPos())
 
-        mem = MapElementManage(camera)
-        self.mem = mem
+        elements = MapElementManage(camera)
+        self.elements = elements
         self.enemies = CreatureGroup()
-        mem.add(player)
+        elements.add(player)
+
+        self.action = Action(self.surfaceList)
+        self.action.player = self.player
+        self.action.enemies = self.enemies
+        self.action.elements = elements
+        self.action.camera = camera
 
         eList = etool.gen_enemies(mapClass)
         for e in eList:
             self.surfaceList.add(e.sprite)
             self.enemies.add(e)
-            mem.add(e)
-        mem.checkAllCamera()
+            elements.add(e)
+        elements.checkAllCamera()
+
+        self.surfaceList.sort()
 
         # DEBUG
         # self.surfaceList.add(mapClass.tilemap)
 
-    def player_try_move(self, d: Direction):
-        match self.player.check_attack_move(d):
-            case Behavior.MOVE:
-                self.player.set_move(d)
-                self.stage = Stage.MOVING
-                self.movingCount = 0
-                self.enemies.random_move()
-            case Behavior.ATTACK:
-                pos = self.player.pos.direct(d)
-                target = self.enemies.get_by_pos(pos)
-                print(f"attack: {target.name}")
-
     def event_handle(self, event: pygame.event.Event, delta: int):
-        if self.stage != Stage.IDLE:
+        if self.action.act != Act.IDLE:
             return
         if event.type == pygame.KEYDOWN:
             key = readkey(event)
@@ -104,33 +96,16 @@ class GameScene(Scene):
                 return
             match key:
                 case "LEFT":
-                    self.player_try_move(Direction.LEFT)
+                    self.action.player_try_move(Direction.LEFT)
                 case "RIGHT":
-                    self.player_try_move(Direction.RIGHT)
+                    self.action.player_try_move(Direction.RIGHT)
                 case "UP":
-                    self.player_try_move(Direction.UP)
+                    self.action.player_try_move(Direction.UP)
                 case "DOWN":
-                    self.player_try_move(Direction.DOWN)
+                    self.action.player_try_move(Direction.DOWN)
 
     def process(self, delta: int) -> SceneSignal:
-        match self.stage:
-            case Stage.IDLE:
-                return
-            case Stage.MOVING:
-                self.process_moving(delta)
-
-    def process_moving(self, delta: int):
-        self.movingCount += MOVING_SPEED * delta
-        if self.movingCount >= setting.TILE_PIXEL:
-            self.player.reached()
-            self.enemies.reached()
-            self.stage = Stage.IDLE
-        else:
-            self.player.moving(delta)
-            self.enemies.moving(delta)
-
-        self.objects["map_camera"].onFocus(self.player.centerAPos())
-        self.mem.checkAllCamera()
+        self.action.process(delta)
 
 
 gameScene = GameScene()

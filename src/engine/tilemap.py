@@ -2,7 +2,7 @@ import pygame
 from .lib import num
 from .lib.grid import GridInt
 from .lib.vect import Vec2i
-from .sufaceItem import SurfaceItem
+from .surfaceItem import SurfaceItem
 
 
 class TileMap(SurfaceItem):

@@ -43,7 +43,7 @@ def generator(debug_surface: pygame.Surface) -> tuple[GridInt, list]:
             if not overlap:
                 rooms.append(newRoom)
 
-        # make rooms
+        # carve rooms
         for r in rooms:
             for y in range(1, r.h):
                 for x in range(1, r.w):
