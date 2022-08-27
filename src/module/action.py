@@ -73,8 +73,6 @@ class Action:
         self.enemiesAI()
 
     def stage_set(self, stage: Stage):
-        # TODO
-        # print(stage)
         self.stage = stage
         self.animateTimeCount = 0
 

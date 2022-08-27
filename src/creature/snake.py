@@ -24,6 +24,6 @@ class Snake(Creature):
     def ai(self):
         (nextToPlayer, availableMove) = self.check_around()
         if nextToPlayer:
-            print("I see a player!")
+            print(f'{self.name} -> melee attack')
         else:
             self.random_move()
