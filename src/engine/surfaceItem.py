@@ -39,6 +39,9 @@ class SurfaceItem(Object):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int())
 
+    def draw_directly(self, surface: pygame.Surface):
+        surface.blit(self.surface, (0, 0))
+
     def draw_with_area(self, surface: pygame.Surface, area: pygame.Rect):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int(), area)

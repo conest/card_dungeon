@@ -20,3 +20,10 @@ class Snake(Creature):
         frames: list = [(0, 6, 200), (1, 6, 200), (2, 6, 200), (3, 6, 200)]
         self.sprite.add_and_load_animation("idle", frames, True)
         self.sprite.animation.play("idle")
+
+    def ai(self):
+        (nextToPlayer, availableMove) = self.check_around()
+        if nextToPlayer:
+            print("I see a player!")
+        else:
+            self.random_move()

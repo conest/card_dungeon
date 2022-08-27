@@ -59,6 +59,12 @@ class TilePos(Vec2i):
     def __str__(self) -> str:
         return f'[TilePos] (x: {self.x}, y: {self.y})'
 
+    def __add__(self, o: TilePos) -> TilePos:
+        return TilePos(self.x + o.x, self.y + o.y)
+
+    def __sub__(self, o: TilePos) -> TilePos:
+        return TilePos(self.x - o.x, self.y - o.y)
+
     def from_vect2i(v: Vec2i) -> TilePos:
         return TilePos(v.x, v.y)
 

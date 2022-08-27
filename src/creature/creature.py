@@ -1,4 +1,5 @@
 import random
+from enum import Enum, auto
 from typing import Dict
 
 import setting
@@ -15,6 +16,12 @@ from creature.kind import Kind
 
 MOVING_SPEED = 0.1
 ATTACK_SPEED = 0.1
+
+
+class Behavior(Enum):
+    IDLE = auto()
+    MOVE = auto()
+    ATTACK = auto()
 
 
 class Creature(MapElement):
@@ -58,6 +65,7 @@ class Creature(MapElement):
         self.set_absolute_position()
         self.sprite.position = Vec2f(self.pos.x, self.pos.y) \
             * setting.TILE_PIXEL * setting.ZOOM
+        self.mapClass.creatureMap.set_grid_v(v, self.kind)
 
     def move(self, d: Direction):
         self.move_to(self.pos.direct(d))
@@ -88,13 +96,33 @@ class Creature(MapElement):
             return False
         return True
 
+    def check_around(self) -> tuple[TilePos, list[TilePos]]:
+        '''Return (player tilePos if player next to, list of available move tile)'''
+        nextToPlayer: TilePos = None
+        availableMove: list[TilePos] = []
+        dirs: list[TilePos] = [self.pos.direct(d) for d in DIR_LOC]
+        for dt in dirs:
+            if self.mapClass.creatureMap.get_v(dt) == Kind.Player:
+                nextToPlayer = dt
+            if self.mapClass.terrain.get_v(dt) == Terrain.WALL:
+                continue
+            if self.mapClass.creatureMap.get_v(dt) != Kind.Nothing:
+                continue
+            availableMove.append(dt)
+        return (nextToPlayer, availableMove)
+
+    def ai(self):
+        '''For overwrite'''
+        pass
+
     def random_move(self):
-        d = random.randint(0, 3)
-        if not self.check_move(d):
+        (_, availableMove) = self.check_around()
+        if len(availableMove) == 0:
             return
-        movingVect = Vec2f.from_tuple(DIR_LOC[d])
-        movingDes = self.pos.direct(d)
-        self.mapClass.creatureMap.set_grid_v(self.pos, 0)
+        des = random.choice(availableMove)
+        movingVect = Vec2f(des.x - self.pos.x, des.y - self.pos.y)
+        movingDes = des
+        self.mapClass.creatureMap.set_grid_v(self.pos, Kind.Nothing)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
 
         self.set_moving(movingVect, movingDes)
@@ -108,6 +136,10 @@ class CreatureGroup:
 
     def add(self, c: Creature):
         self.creatures[c.name] = c
+
+    def ai(self):
+        for c in self.creatures.values():
+            c.ai()
 
     def random_move(self):
         for c in self.creatures.values():

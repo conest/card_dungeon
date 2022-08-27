@@ -1,5 +1,3 @@
-from enum import Enum, auto
-
 import pygame
 
 from engine.lib.vect import Vec2i
@@ -7,6 +5,7 @@ from engine.lib.tilePos import TilePos, Direction
 from engine.scene import Scene, SceneSignal
 from engine.resource import resource
 from engine.camera import CameraStack
+from engine.sprite import Sprite
 
 import setting
 
@@ -14,14 +13,9 @@ from scene.keys import readkey
 from module.map import Map
 from module.player import Player
 from module.map_element import MapElementManage
-from module.action import Act, Action
+from module.action import Stage, Action
 from creature import enemy_tool as etool
 from creature.creature import CreatureGroup
-
-
-class Stage(Enum):
-    IDLE = auto()
-    MOVING = auto()
 
 
 class GameScene(Scene):
@@ -37,12 +31,12 @@ class GameScene(Scene):
     movingCount: float
 
     def init(self):
-        resource.add_surface("DungeonTileset", "assets/DungeonTileset.png")
+        resource.add_surface("DungeonTileset", "assets/Dungeon_Tileset.png")
         resource.add_surface("animalsheet", "assets/AnimalsSheet.png")
         resource.scale_surface("animalsheet", setting.ZOOM)
 
         mapClass = Map()
-        mapClass.tilemap_load_resource(resource.surface("DungeonTileset"), 16, 23)
+        mapClass.tilemap_load_resource(resource.surface("DungeonTileset"), 10, 10)
         mapClass.map_generate()
         mapClass.draw_map()
         self.mapClass = mapClass
@@ -74,6 +68,7 @@ class GameScene(Scene):
         self.action.enemies = self.enemies
         self.action.elements = elements
         self.action.camera = camera
+        self.action.mapClass = mapClass
 
         eList = etool.gen_enemies(mapClass)
         for e in eList:
@@ -82,13 +77,19 @@ class GameScene(Scene):
             elements.add(e)
         elements.checkAllCamera()
 
+        resource.add_surface("ui", "assets/ui.png")
+        ui = Sprite(resource.surface("ui"))
+        ui.name = "ui"
+        ui.zIndex = 10
+        ui.set_position(0, 300)
+        self.surfaceList.add(ui)
         self.surfaceList.sort()
 
         # DEBUG
         # self.surfaceList.add(mapClass.tilemap)
 
     def event_handle(self, event: pygame.event.Event, delta: int):
-        if self.action.act != Act.IDLE:
+        if self.action.stage != Stage.IDLE:
             return
         if event.type == pygame.KEYDOWN:
             key = readkey(event)

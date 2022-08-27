@@ -12,8 +12,8 @@ from module import map_tool as tool
 
 
 SHEET: Dict[Terrain, int] = {
-    Terrain.WALL: 241,
-    Terrain.STAIRS: 7,
+    Terrain.WALL: 2,
+    Terrain.STAIRS: 39,
 }
 
 

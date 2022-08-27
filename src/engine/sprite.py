@@ -40,11 +40,6 @@ class Sprite(SurfaceItem):
         img: pygame.Surface = pygame.image.load(imgPath)
         return Sprite(img)
 
-    def draw(self, surface: pygame.Surface):
-        '''(@Sprite) Overload SurfaceItem's draw method for better performance'''
-        if self.visible:
-            surface.blit(self.spritesheet, self.position.to_tuple_int(), self._frame_rect)
-
     def set_framesHV(self, h: int, v: int):
         '''Set horizontal and vertical numbers for the sprite sheet'''
         self._Hframes = max(1, h)
@@ -89,6 +84,14 @@ class Sprite(SurfaceItem):
         '''[Abandoned]'''
         self.surface = pygame.Surface((self.size.w, self.size.h), pygame.SRCALPHA).convert_alpha()
         self.surface.blit(self.spritesheet, (0, 0), self._frame_rect)
+
+    def draw(self, surface: pygame.Surface):
+        '''(@Sprite) Overload SurfaceItem's draw method for better performance'''
+        if self.visible:
+            surface.blit(self.spritesheet, self.position.to_tuple_int(), self._frame_rect)
+
+    def draw_directly(self, surface: pygame.Surface):
+        surface.blit(self.spritesheet, (0, 0), area=self._frame_rect)
 
 
 class AnimatedSprite(Sprite):
@@ -140,3 +143,7 @@ class AnimatedSprite(Sprite):
         if self.visible:
             rect = self.animation.rect()
             surface.blit(self.spritesheet, self.position.to_tuple_int(), rect)
+
+    def draw_directly(self, surface: pygame.Surface):
+        rect = self.animation.rect()
+        surface.blit(self.spritesheet, (0, 0), area=rect)
