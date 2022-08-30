@@ -3,6 +3,7 @@ from engine.lib.vect import Vec2f
 from engine.resource import resource
 from engine.sprite import AnimatedSprite
 from engine.lib.tilePos import Direction, DIR_LOC
+from engine.signal import Signal
 
 from creature.creature import Creature
 from creature.kind import Kind
@@ -19,7 +20,7 @@ class Player(Creature):
     defence: int = 10
 
     def __init__(self, mapClass: Map):
-        resource.add_surface(Player.NAME, "assets/Dwarves.png")
+        resource.add_surface(Player.NAME, setting.ASSERT_PLAYER)
         resource.scale_surface(Player.NAME, setting.ZOOM)
         super().__init__(Player.NAME, AnimatedSprite(resource.surface("player")), mapClass)
 
@@ -28,6 +29,13 @@ class Player(Creature):
         self.sprite.set_framesHV(25, 6)
         self._load_animation()
         self.sprite.zIndex = 2
+
+        self.maxHP = Player.maxHP
+        self.hp = Player.hp
+        self.atk = Player.atk
+        self.defence = Player.defence
+
+        self.signals.sign(Signal("change_attribute", Player.NAME))
 
     def __str__(self) -> str:
         return "[Player]"
@@ -46,3 +54,7 @@ class Player(Creature):
         self.set_moving(movingVect, movingDes)
         self.mapClass.creatureMap.set_grid_v(self.pos, Kind.Nothing)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
+
+    def change_attribute(self):
+        self.signals.set_data("change_attribute", [self.hp, self.atk, self.defence])
+        self.signals.active("change_attribute")

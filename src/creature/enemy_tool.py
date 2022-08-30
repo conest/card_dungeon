@@ -29,7 +29,7 @@ def gen_enemies(m: Map) -> list[Creature]:
 
         if (t == Terrain.PATH or t == Terrain.ROOM) and ct == Kind.Nothing:
             name = Snake.NAME + resource.unique_num()
-            enemy = Snake(name, "animalsheet", m)
+            enemy = Snake(name, m)
 
             enemy.move_to(TilePos(sx, sy))
             m.creatureMap.set_grid(sx, sy, enemy.kind)

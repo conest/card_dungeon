@@ -51,16 +51,27 @@ class Creature(MapElement):
         self.movingDes = TilePos()
         self.movingCount = 0
 
+        self.maxHP = 1
+        self.hp = 1
+        self.atk = 1
+        self.defence = 1
+
     def __str__(self) -> str:
         return f'[Creature] {self.name}'
 
-    def set_hp(self, hp: int):
-        self.maxHP = hp
-        self.hp = hp
+    def set_hp(self, mut: int) -> bool:
+        self.hp += mut
+        self.hp = min(self.maxHP, self.hp)
+        if self.hp <= 0:
+            return True
+        return False
 
-    def attacked(self, attacker: Creature):
+    def attacked(self, attacker: Creature) -> bool:
+        '''Return true if dead'''
         # TODO Atteacked
-        print(f'{self.name} attacked by {attacker.name}')
+        damage = max(0, attacker.atk - self.defence)
+        print(f'{self.name} attacked by {attacker.name} cause {damage} damage')
+        return self.set_hp(-damage)
 
     def check_attack(self, pos: TilePos, k: Kind = None) -> bool:
         if k is None and self.mapClass.creatureMap.get_v(pos) != Kind.Nothing:
@@ -137,36 +148,6 @@ class Creature(MapElement):
         return movingDes
 
 
-class CreatureBehaviors:
-    cIdle: dict[Creature, TilePos]
-    cMove: dict[Creature, TilePos]
-    cAttack: dict[Creature, TilePos]
-
-    def __init__(self):
-        self.reset()
-
-    def reset(self):
-        self.cIdle = {}
-        self.cMove = {}
-        self.cAttack = {}
-
-    def add(self, c: Creature, behavior: Behavior, tp: TilePos):
-        match behavior:
-            case Behavior.IDLE:
-                self.cIdle[c] = tp
-            case Behavior.MOVE:
-                self.cMove[c] = tp
-            case Behavior.ATTACK:
-                self.cAttack[c] = tp
-
-    def get_attacker(self) -> Creature:
-        while len(self.cAttack) > 0:
-            (c, tp) = self.cAttack.popitem()
-            if c.check_attack(tp, Kind.Player):
-                return c
-        return None
-
-
 class CreatureGroup:
     creatures: Dict[str, Creature]
 
@@ -181,10 +162,6 @@ class CreatureGroup:
     def add(self, c: Creature):
         self.creatures[c.name] = c
 
-    def random_move(self):
-        for c in self.cMove:
-            c.random_move()
-
     def moving(self, delta: int):
         for c in self.cMove:
             c.moving(delta)
@@ -198,6 +175,16 @@ class CreatureGroup:
             if e.pos == pos:
                 return e
         return None
+
+    def delete(self, name: str):
+        c = self.creatures[name]
+        if c in self.cIdle:
+            del self.cIdle[c]
+        if c in self.cMove:
+            del self.cMove[c]
+        if c in self.cAttack:
+            del self.cAttack[c]
+        del self.creatures[name]
 
     def reset_behavior(self):
         self.cIdle = {}

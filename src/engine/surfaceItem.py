@@ -23,6 +23,10 @@ class SurfaceItem(Object):
         self.surface = pygame.Surface((x, y), pygame.SRCALPHA)
         self.size = pygame.Rect(0, 0, x, y)
 
+    def load_surface(self, s: pygame.Surface):
+        self.surface = s
+        self.size = pygame.Rect((0, 0), s.get_size())
+
     def rect(self) -> pygame.Rect:
         return pygame.Rect(self.position.to_tuple_int(), self.size.size)
 
@@ -38,6 +42,10 @@ class SurfaceItem(Object):
     def draw(self, surface: pygame.Surface):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int())
+
+    def draw_to(self, surface: pygame.Surface, pos: Vec2f):
+        if self.visible:
+            surface.blit(self.surface, pos.to_tuple_int())
 
     def draw_directly(self, surface: pygame.Surface):
         surface.blit(self.surface, (0, 0))

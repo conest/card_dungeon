@@ -17,7 +17,7 @@ class Scene:
     objects: dict = {}
     '''Commen objects dic'''
     surfaceList: SurfaceList
-    links: list = []
+    links: list[Link] = []
     '''Signal links'''
 
     def __init__(self):
@@ -48,8 +48,8 @@ class Scene:
     def draw(self, screen: pygame.Surface):
         self.surfaceList.draw(screen)
 
-    def link(self, source: Signal, target: SurfaceItem, targetFunc: Callable):
-        self.links.append(Link(source, target, targetFunc))
+    def link(self, source: Signal, targetFunc: Callable):
+        self.links.append(Link(source, targetFunc))
 
     def delete_obj(self, name: str, isSurface: bool = False):
         del self.objects[name]

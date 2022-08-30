@@ -1,3 +1,4 @@
+import setting
 from engine.resource import resource
 from engine.sprite import AnimatedSprite
 from engine.lib.tilePos import TilePos
@@ -12,15 +13,21 @@ class Snake(Creature):
 
     maxHP: int = 10
     hp: int = 10
-    atk: int = 15
+    atk: int = 11
     defence: int = 5
 
-    def __init__(self, name: str, resourceName: str, m: Map):
+    def __init__(self, name: str, m: Map):
+        resourceName = setting.ASSERT_ANIMALS
         super().__init__(name, AnimatedSprite(resource.surface(resourceName)), m)
 
         self.kind = Snake.KIND
         self.sprite.set_framesHV(20, 7)
         self._load_animation()
+
+        self.maxHP = Snake.maxHP
+        self.hp = Snake.hp
+        self.atk = Snake.atk
+        self.defence = Snake.defence
 
     def _load_animation(self):
         frames: list = [(0, 6, 200), (1, 6, 200), (2, 6, 200), (3, 6, 200)]

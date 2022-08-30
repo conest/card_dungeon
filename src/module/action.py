@@ -146,7 +146,8 @@ class Action:
         # Ending a attack
         self.attackedEffect.visible = False
         self.source.sprite.position = self.tPosition
-        self.target.attacked(self.source)
+        self.apply_attack()
+
         self.next_stage()
 
     def check_enemy_attack(self, delta: int):
@@ -159,3 +160,17 @@ class Action:
         self.stageList.append(Stage.C_ATTACK)
         self.stage_set(Stage.ATTACK)
         self.process_attack(delta)
+
+    def apply_attack(self):
+        target = self.target
+        isDead = target.attacked(self.source)
+        # TODO: Player's death
+        if (target.name == Player.NAME) and isDead:
+            print("Oh, you are dead")
+            return
+        # Enemy dead
+        if isDead:
+            self.mapClass.creatureMap.set_grid_v(target.pos, Kind.Nothing)
+            self.elements.delete(target.name)
+            self.enemies.delete(target.name)
+            self.surfaceList.delete(target.sprite.name)
