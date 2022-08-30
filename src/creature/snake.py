@@ -1,13 +1,19 @@
 from engine.resource import resource
-from creature.creature import Creature
 from engine.sprite import AnimatedSprite
+from engine.lib.tilePos import TilePos
 from module.map import Map
 from creature.kind import Kind
+from creature.creature import Creature, Behavior
 
 
 class Snake(Creature):
     NAME = "Snake"
     KIND = Kind.Snake
+
+    maxHP: int = 10
+    hp: int = 10
+    atk: int = 15
+    defence: int = 5
 
     def __init__(self, name: str, resourceName: str, m: Map):
         super().__init__(name, AnimatedSprite(resource.surface(resourceName)), m)
@@ -21,9 +27,14 @@ class Snake(Creature):
         self.sprite.add_and_load_animation("idle", frames, True)
         self.sprite.animation.play("idle")
 
-    def ai(self):
+    def ai(self) -> tuple[Behavior, TilePos]:
         (nextToPlayer, availableMove) = self.check_around()
+        behavior = Behavior.IDLE
+        tp = None
         if nextToPlayer:
-            print(f'{self.name} -> melee attack')
+            behavior = Behavior.ATTACK
+            tp = nextToPlayer
         else:
-            self.random_move()
+            tp = self.random_move()
+            behavior = Behavior.MOVE
+        return (behavior, tp)

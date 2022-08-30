@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import random
 from enum import Enum, auto
 from typing import Dict
@@ -5,8 +7,8 @@ from typing import Dict
 import setting
 
 from engine.lib.tilePos import Direction
-from engine.lib.vect import Vec2i, Vec2f
-from engine.lib.tilePos import TilePos, Direction, DIR_LOC
+from engine.lib.vect import Vec2f
+from engine.lib.tilePos import TilePos, DIR_LOC
 
 from engine.surfaceItem import SurfaceItem
 from module.map_element import MapElement
@@ -56,9 +58,16 @@ class Creature(MapElement):
         self.maxHP = hp
         self.hp = hp
 
-    def attacked(self, atk: int):
+    def attacked(self, attacker: Creature):
         # TODO Atteacked
-        pass
+        print(f'{self.name} attacked by {attacker.name}')
+
+    def check_attack(self, pos: TilePos, k: Kind = None) -> bool:
+        if k is None and self.mapClass.creatureMap.get_v(pos) != Kind.Nothing:
+            return True
+        if self.mapClass.creatureMap.get_v(pos) == k:
+            return True
+        return False
 
     def move_to(self, v: TilePos):
         self.pos = v
@@ -111,50 +120,107 @@ class Creature(MapElement):
             availableMove.append(dt)
         return (nextToPlayer, availableMove)
 
-    def ai(self):
+    def ai(self) -> tuple[Behavior, TilePos]:
         '''For overwrite'''
-        pass
+        return (None, None)
 
-    def random_move(self):
+    def random_move(self) -> TilePos:
         (_, availableMove) = self.check_around()
         if len(availableMove) == 0:
             return
-        des = random.choice(availableMove)
-        movingVect = Vec2f(des.x - self.pos.x, des.y - self.pos.y)
-        movingDes = des
+        movingDes = random.choice(availableMove)
+        movingVect = Vec2f(movingDes.x - self.pos.x, movingDes.y - self.pos.y)
         self.mapClass.creatureMap.set_grid_v(self.pos, Kind.Nothing)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
 
         self.set_moving(movingVect, movingDes)
+        return movingDes
+
+
+class CreatureBehaviors:
+    cIdle: dict[Creature, TilePos]
+    cMove: dict[Creature, TilePos]
+    cAttack: dict[Creature, TilePos]
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.cIdle = {}
+        self.cMove = {}
+        self.cAttack = {}
+
+    def add(self, c: Creature, behavior: Behavior, tp: TilePos):
+        match behavior:
+            case Behavior.IDLE:
+                self.cIdle[c] = tp
+            case Behavior.MOVE:
+                self.cMove[c] = tp
+            case Behavior.ATTACK:
+                self.cAttack[c] = tp
+
+    def get_attacker(self) -> Creature:
+        while len(self.cAttack) > 0:
+            (c, tp) = self.cAttack.popitem()
+            if c.check_attack(tp, Kind.Player):
+                return c
+        return None
 
 
 class CreatureGroup:
     creatures: Dict[str, Creature]
 
+    cIdle: dict[Creature, TilePos]
+    cMove: dict[Creature, TilePos]
+    cAttack: dict[Creature, TilePos]
+
     def __init__(self):
         self.creatures = {}
+        self.reset_behavior()
 
     def add(self, c: Creature):
         self.creatures[c.name] = c
 
-    def ai(self):
-        for c in self.creatures.values():
-            c.ai()
-
     def random_move(self):
-        for c in self.creatures.values():
+        for c in self.cMove:
             c.random_move()
 
     def moving(self, delta: int):
-        for c in self.creatures.values():
+        for c in self.cMove:
             c.moving(delta)
 
     def reached(self):
-        for c in self.creatures.values():
+        for c in self.cMove:
             c.reached()
 
     def get_by_pos(self, pos: TilePos) -> Creature:
         for e in self.creatures.values():
             if e.pos == pos:
                 return e
+        return None
+
+    def reset_behavior(self):
+        self.cIdle = {}
+        self.cMove = {}
+        self.cAttack = {}
+
+    def gen_behavior(self):
+        for c in self.creatures.values():
+            (behavior, tp) = c.ai()
+            self.add_behivior(c, behavior, tp)
+
+    def add_behivior(self, c: Creature, behavior: Behavior, tp: TilePos):
+        match behavior:
+            case Behavior.IDLE:
+                self.cIdle[c] = tp
+            case Behavior.MOVE:
+                self.cMove[c] = tp
+            case Behavior.ATTACK:
+                self.cAttack[c] = tp
+
+    def get_attacker(self) -> Creature:
+        while len(self.cAttack) > 0:
+            (c, tp) = self.cAttack.popitem()
+            if c.check_attack(tp, Kind.Player):
+                return c
         return None

@@ -37,5 +37,4 @@ def gen_enemies(m: Map) -> list[Creature]:
             genNum -= 1
             if genNum == 0:
                 return eList
-    print("???????")
-    return []
+    return eList

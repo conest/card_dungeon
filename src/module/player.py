@@ -13,6 +13,11 @@ class Player(Creature):
     NAME = "player"
     KIND = Kind.Player
 
+    maxHP: int = 50
+    hp: int = 50
+    atk: int = 10
+    defence: int = 10
+
     def __init__(self, mapClass: Map):
         resource.add_surface(Player.NAME, "assets/Dwarves.png")
         resource.scale_surface(Player.NAME, setting.ZOOM)

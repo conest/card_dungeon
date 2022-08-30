@@ -104,6 +104,8 @@ class GameScene(Scene):
                     self.action.player_try_move(Direction.UP)
                 case "DOWN":
                     self.action.player_try_move(Direction.DOWN)
+                case "WAIT":
+                    self.action.player_wait()
 
     def process(self, delta: int) -> SceneSignal:
         self.action.process(delta)
