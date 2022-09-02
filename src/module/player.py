@@ -1,4 +1,6 @@
 import setting
+import asset as ASSET
+
 from engine.lib.vect import Vec2f
 from engine.resource import resource
 from engine.sprite import AnimatedSprite
@@ -20,7 +22,7 @@ class Player(Creature):
     defence: int = 10
 
     def __init__(self, mapClass: Map):
-        resource.add_surface(Player.NAME, setting.ASSERT_PLAYER)
+        resource.add_surface(Player.NAME, ASSET.PLAYER)
         resource.scale_surface(Player.NAME, setting.ZOOM)
         super().__init__(Player.NAME, AnimatedSprite(resource.surface("player")), mapClass)
 
@@ -36,6 +38,7 @@ class Player(Creature):
         self.defence = Player.defence
 
         self.signals.sign(Signal("change_attribute", Player.NAME))
+        self.signals.sign(Signal("change_hp", Player.NAME))
 
     def __str__(self) -> str:
         return "[Player]"
@@ -55,6 +58,21 @@ class Player(Creature):
         self.mapClass.creatureMap.set_grid_v(self.pos, Kind.Nothing)
         self.mapClass.creatureMap.set_grid_v(movingDes, self.kind)
 
-    def change_attribute(self):
+    def attacked(self, attacker: Creature) -> bool:
+        '''(@Player) Overload Creature's attacked method'''
+        damage = max(0, attacker.atk - self.defence)
+        print(f'! {self.name} attacked by {attacker.name} cause {damage} damage')
+        isDead = self.set_hp(-damage)
+        self.emit_change_hp()
+        if isDead:
+            # TODO: player isDead
+            pass
+        return isDead
+
+    def emit_change_attribute(self):
         self.signals.set_data("change_attribute", [self.hp, self.atk, self.defence])
         self.signals.active("change_attribute")
+
+    def emit_change_hp(self):
+        self.signals.set_data("change_hp", [self.hp, self.maxHP])
+        self.signals.active("change_hp")

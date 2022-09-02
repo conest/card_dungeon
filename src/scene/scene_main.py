@@ -7,6 +7,7 @@ from engine.resource import resource
 from engine.camera import CameraStack
 
 import setting
+import asset as ASSET
 
 from scene.keys import readkey
 from module.map import Map
@@ -31,13 +32,13 @@ class GameScene(Scene):
     movingCount: float
 
     def init(self):
-        resource.add_surface(setting.ASSERT_DUNGEON, setting.ASSERT_DUNGEON)
-        resource.add_surface(setting.ASSERT_ANIMALS, setting.ASSERT_ANIMALS)
-        resource.scale_surface(setting.ASSERT_ANIMALS, setting.ZOOM)
-        resource.add_font(setting.ASSERT_FONT_SMPIX, setting.ASSERT_FONT_SMPIX, 8)
+        resource.add_surface(ASSET.DUNGEON, ASSET.DUNGEON)
+        resource.add_surface(ASSET.ANIMALS, ASSET.ANIMALS)
+        resource.scale_surface(ASSET.ANIMALS, setting.ZOOM)
+        resource.add_font(ASSET.FONT_SMPIX, ASSET.FONT_SMPIX, 8)
 
         mapClass = Map()
-        mapClass.tilemap_load_resource(resource.surface(setting.ASSERT_DUNGEON), 10, 10)
+        mapClass.tilemap_load_resource(resource.surface(ASSET.DUNGEON), 10, 10)
         mapClass.map_generate()
         mapClass.draw_map()
         self.mapClass = mapClass
@@ -83,7 +84,8 @@ class GameScene(Scene):
         self.surfaceList.sort()
 
         self.link(player.signals.get("change_attribute"), ui._link_player_change_attribute)
-        player.change_attribute()
+        self.link(player.signals.get("change_hp"), ui._link_hp_change)
+        player.emit_change_attribute()
 
         # DEBUG
         # self.surfaceList.add(mapClass.tilemap)

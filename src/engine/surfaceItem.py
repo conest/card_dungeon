@@ -11,10 +11,13 @@ class SurfaceItem(Object):
     visible: bool
     zIndex: int
 
-    def __init__(self):
+    def __init__(self, s: pygame.Surface = None):
         super().__init__()
-        self.surface = None
-        self.size = pygame.Rect(0, 0, 0, 0)
+        if s is not None:
+            self.load_surface(s)
+        else:
+            self.surface = None
+            self.size = pygame.Rect(0, 0, 0, 0)
         self.position = Vec2f()
         self.zIndex = 0
         self.visible = True
@@ -43,12 +46,18 @@ class SurfaceItem(Object):
         if self.visible:
             surface.blit(self.surface, self.position.to_tuple_int())
 
-    def draw_to(self, surface: pygame.Surface, pos: Vec2f):
+    def draw_custom(self, surface: pygame.Surface, pos: Vec2f = Vec2f(), area: pygame.Rect = None):
         if self.visible:
-            surface.blit(self.surface, pos.to_tuple_int())
+            if area is None:
+                area = self.surface.get_rect()
+            surface.blit(self.surface, pos.to_tuple_int(), area)
 
     def draw_directly(self, surface: pygame.Surface):
         surface.blit(self.surface, (0, 0))
+
+    def draw_to(self, surface: pygame.Surface, pos: Vec2f):
+        if self.visible:
+            surface.blit(self.surface, pos.to_tuple_int())
 
     def draw_with_area(self, surface: pygame.Surface, area: pygame.Rect):
         if self.visible:

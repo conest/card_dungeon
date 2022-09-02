@@ -63,6 +63,7 @@ class Creature(MapElement):
         self.hp += mut
         self.hp = min(self.maxHP, self.hp)
         if self.hp <= 0:
+            self.hp = 0
             return True
         return False
 

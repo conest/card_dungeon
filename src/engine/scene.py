@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import Callable
 
 import pygame
-from .surfaceItem import SurfaceItem, SurfaceList
+from .surfaceItem import SurfaceList
 from .signal import Signal, Link
 
 

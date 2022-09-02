@@ -1,4 +1,5 @@
-import setting
+import asset as ASSET
+
 from engine.resource import resource
 from engine.sprite import AnimatedSprite
 from engine.lib.tilePos import TilePos
@@ -13,11 +14,11 @@ class Snake(Creature):
 
     maxHP: int = 10
     hp: int = 10
-    atk: int = 11
+    atk: int = 15
     defence: int = 5
 
     def __init__(self, name: str, m: Map):
-        resourceName = setting.ASSERT_ANIMALS
+        resourceName = ASSET.ANIMALS
         super().__init__(name, AnimatedSprite(resource.surface(resourceName)), m)
 
         self.kind = Snake.KIND

@@ -1,50 +1,48 @@
-import pygame
-
-from engine.scene import Scene, SceneSignal
 from engine.resource import resource
-from engine.sprite import Sprite
-from engine.surfaceItem import SurfaceItem
-from engine.font import Font
+from engine.ui import UIelement
+from engine.font import Font_UI
 
-import setting
+import asset as ASSET
 
 
-class UI_play(SurfaceItem):
+class UI_play(UIelement):
     NAME = "UI_play"
-    font_hp: Font
-    font_atk: Font
-    font_def: Font
 
     def __init__(self):
         super().__init__()
-        resource.add_surface(setting.ASSERT_UI_PLAY, setting.ASSERT_UI_PLAY)
-        self.load_surface(resource.surface(setting.ASSERT_UI_PLAY))
         self.name = UI_play.NAME
+        resource.add_surface(ASSET.UI_PLAY, ASSET.UI_PLAY)
+        self.load_surface(resource.surface(ASSET.UI_PLAY))
         self.zIndex = 10
         self.set_position(0, 340)
 
-        self.font_hp = Font(resource.font(setting.ASSERT_FONT_SMPIX))
-        self.font_hp.set_string("-")
-        self.font_hp.set_position(113, 67)
-        self.font_atk = Font(resource.font(setting.ASSERT_FONT_SMPIX))
-        self.font_atk.set_string("-")
-        self.font_atk.set_position(150, 67)
-        self.font_def = Font(resource.font(setting.ASSERT_FONT_SMPIX))
-        self.font_def.set_string("-")
-        self.font_def.set_position(187, 67)
+        resource.add_surface(ASSET.HP_BAR, ASSET.HP_BAR)
+        self.add_child("hp_bar", UIelement(self, resource.surface(ASSET.HP_BAR)))
+        self.children["hp_bar"].set_position(98, 37)
 
-    def draw(self, surface: pygame.Surface):
-        '''(@UI_play) Overload SurfaceItem's draw method'''
-        if self.visible:
-            surface.blit(self.surface, self.position.to_tuple_int())
-            self.draw_fonts(surface)
+        self.add_child("font_hp", Font_UI(resource.font(ASSET.FONT_SMPIX), self))
+        self.children["font_hp"].set_position(160, 37)
+        self.children["font_hp"].set_string("50 / 50")
 
-    def draw_fonts(self, surface: pygame.Surface):
-        self.font_hp.draw_to(surface, self.font_hp.position + self.position)
-        self.font_atk.draw_to(surface, self.font_atk.position + self.position)
-        self.font_def.draw_to(surface, self.font_def.position + self.position)
+        self.add_child("font_maxhp", Font_UI(resource.font(ASSET.FONT_SMPIX), self))
+        self.children["font_maxhp"].set_position(113, 67)
+        self.add_child("font_atk", Font_UI(resource.font(ASSET.FONT_SMPIX), self))
+        self.children["font_atk"].set_position(150, 67)
+        self.add_child("font_def", Font_UI(resource.font(ASSET.FONT_SMPIX), self))
+        self.children["font_def"].set_position(187, 67)
+
+        self.add_child("card_font", Font_UI(resource.font(ASSET.FONT_SMPIX), self))
+        self.children["card_font"].set_string("Sword")
+        self.children["card_font"].set_position(428, 31)
 
     def _link_player_change_attribute(self, data: list):
-        self.font_hp.set_string(str(data[0]))
-        self.font_atk.set_string(str(data[1]))
-        self.font_def.set_string(str(data[2]))
+        '''data: [hp, atk, def]'''
+        self.children["font_maxhp"].set_string(str(data[0]))
+        self.children["font_atk"].set_string(str(data[1]))
+        self.children["font_def"].set_string(str(data[2]))
+
+    def _link_hp_change(self, data: list):
+        '''data: [hp, maxHp]'''
+        [hp, maxHp] = data
+        self.children["font_hp"].set_string(f'{hp} / {maxHp}')
+        self.children["hp_bar"].size.w = hp / maxHp * resource.surface(ASSET.HP_BAR).get_width()
