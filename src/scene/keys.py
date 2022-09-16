@@ -6,6 +6,7 @@ keys = {
     "UP": (pygame.K_UP, pygame.K_w),
     "DOWN": (pygame.K_DOWN, pygame.K_s),
     "WAIT": (pygame.K_SPACE),
+    "C": (pygame.K_c),
 }
 
 

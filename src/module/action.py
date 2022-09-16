@@ -1,8 +1,8 @@
 from enum import Enum, auto
 import pygame
 
-from engine.lib.vect import Vec2i, Vec2f
-from engine.lib.tilePos import TilePos, Direction
+from engine.lib.vect import Vec2f
+from engine.lib.tilePos import Direction
 from engine.camera import CameraStack
 from engine.surfaceItem import SurfaceList, SurfaceItem
 
@@ -11,7 +11,7 @@ from module.map_element import MapElementManage
 from module.map import Map
 from module.map_terrain import Terrain
 from module.player import Player
-from creature.creature import Behavior, Creature, CreatureGroup, MOVING_SPEED, ATTACK_SPEED
+from creature.creature import Creature, CreatureGroup, MOVING_SPEED, ATTACK_SPEED
 from creature.kind import Kind
 
 
@@ -140,7 +140,10 @@ class Action:
         self.animateTimeCount += ATTACK_SPEED * delta
         if self.animateTimeCount < setting.TILE_PIXEL:
             alpha = 255 * (1 - self.animateTimeCount / setting.TILE_PIXEL)
-            self.attackedMask.to_surface(self.attackedEffect.surface, setcolor=(255, 0, 0, alpha), unsetcolor=(0, 0, 0, 0))
+            self.attackedMask.to_surface(
+                self.attackedEffect.surface,
+                setcolor=(255, 0, 0, alpha),
+                unsetcolor=(0, 0, 0, 0))
             return
 
         # Ending a attack

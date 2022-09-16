@@ -11,3 +11,6 @@ FONT_PS2PIX = "assets/font/PressStart2P.ttf"
 FONT_dogica = "assets/font/dogica.ttf"
 FONT_dogicapixel = "assets/font/dogicapixel.ttf"
 FONT_dogicapixelbold = "assets/font/dogicapixelbold.ttf"
+
+# Card
+CARD_POTION = "assets/card_1.png"

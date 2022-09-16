@@ -10,6 +10,7 @@ from engine.signal import Signal
 from creature.creature import Creature
 from creature.kind import Kind
 from module.map import Map
+from card.card import Card
 
 
 class Player(Creature):
@@ -20,6 +21,8 @@ class Player(Creature):
     hp: int = 50
     atk: int = 10
     defence: int = 10
+
+    cards: list[Card]
 
     def __init__(self, mapClass: Map):
         resource.add_surface(Player.NAME, ASSET.PLAYER)
@@ -37,8 +40,11 @@ class Player(Creature):
         self.atk = Player.atk
         self.defence = Player.defence
 
+        self.cards = []
+
         self.signals.sign(Signal("change_attribute", Player.NAME))
         self.signals.sign(Signal("change_hp", Player.NAME))
+        self.signals.sign(Signal("get_card", Player.NAME))
 
     def __str__(self) -> str:
         return "[Player]"
@@ -69,6 +75,21 @@ class Player(Creature):
             pass
         return isDead
 
+    def get_card(self, card: Card):
+        self.cards.append(card)
+        self.emit_get_card(card)
+
+    def _link_use_card(self, data: list):
+        '''data: [index]'''
+        [index] = data
+        self.cards[index].use()
+        self.cards.pop(index)
+
+        # TODO: For potion effect only
+        self.hp += 20
+        self.hp = min(self.maxHP, self.hp)
+        self.emit_change_hp()
+
     def emit_change_attribute(self):
         self.signals.set_data("change_attribute", [self.hp, self.atk, self.defence])
         self.signals.active("change_attribute")
@@ -76,3 +97,7 @@ class Player(Creature):
     def emit_change_hp(self):
         self.signals.set_data("change_hp", [self.hp, self.maxHP])
         self.signals.active("change_hp")
+
+    def emit_get_card(self, card: Card):
+        self.signals.set_data("get_card", [card])
+        self.signals.active("get_card")

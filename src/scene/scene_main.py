@@ -17,6 +17,7 @@ from module.action import Stage, Action
 from creature import enemy_tool as etool
 from creature.creature import CreatureGroup
 from module.ui import UI_play
+from card.potion import Potion
 
 
 class GameScene(Scene):
@@ -36,6 +37,8 @@ class GameScene(Scene):
         resource.add_surface(ASSET.ANIMALS, ASSET.ANIMALS)
         resource.scale_surface(ASSET.ANIMALS, setting.ZOOM)
         resource.add_font(ASSET.FONT_SMPIX, ASSET.FONT_SMPIX, 8)
+
+        resource.add_surface(ASSET.CARD_POTION, ASSET.CARD_POTION)
 
         mapClass = Map()
         mapClass.tilemap_load_resource(resource.surface(ASSET.DUNGEON), 10, 10)
@@ -85,7 +88,12 @@ class GameScene(Scene):
 
         self.link(player.signals.get("change_attribute"), ui._link_player_change_attribute)
         self.link(player.signals.get("change_hp"), ui._link_hp_change)
+        self.link(player.signals.get("get_card"), ui._link_get_card)
+        self.link(ui.signals.get("use_card"), player._link_use_card)
         player.emit_change_attribute()
+
+        # Card
+        player.get_card(Potion())
 
         # DEBUG
         # self.surfaceList.add(mapClass.tilemap)
@@ -108,6 +116,8 @@ class GameScene(Scene):
                     self.action.player_try_move(Direction.DOWN)
                 case "WAIT":
                     self.action.player_wait()
+                case "C":
+                    self.player.get_card(Potion())
 
     def process(self, delta: int) -> SceneSignal:
         self.action.process(delta)
